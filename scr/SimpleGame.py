@@ -291,10 +291,6 @@ class Game:
                         stdscr.addstr( s,curses.color_pair(2))
                     else:
                         stdscr.addstr( ". ",)
-                    # if self.green_pips[k][i][j] > 0:
-                        # stdscr.addstr('{}'.format(self.green_pips[k][i][j]),curses.color_pair(2))
-                    # else:
-                        # stdscr.addstr(". ")
         stdscr.refresh()
 
     def fancy_state_highlight(self, stdscr):
