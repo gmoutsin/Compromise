@@ -171,7 +171,7 @@ class HumanPlayer(AbstractPlayer):
         return [int(s[2])-1,int(s[3])-1,int(s[4])-1]
 
 
-class Game:
+class SimpleGame:
     def __init__(self, playerA, playerB, nPips = 12, length = 10):
         if not (isinstance(playerA, AbstractPlayer)):
             raise Exception("Green Player is not of valid type: " + str(type(playerA)))
@@ -387,5 +387,5 @@ class Game:
 if __name__ == "__main__":
     pA = HumanPlayer()
     pB = DeterminedPlayer()
-    g = Game(pA, pB, 12, 10)
+    g = SimpleGame(pA, pB, 12, 10)
     curses.wrapper(g.fancy_play)
