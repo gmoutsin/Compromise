@@ -11,15 +11,11 @@ class AbstractPlayer(metaclass=abc.ABCMeta):
         return
     
     def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
-        return
-
+        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 class RandomPlayer(AbstractPlayer):
     def play(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
         return [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
-    
-    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
-        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 
 class GreedyPlayer(AbstractPlayer):
@@ -53,9 +49,6 @@ class GreedyPlayer(AbstractPlayer):
         m = min(third)
         res[2] = [i for i, j in enumerate(third) if j == m][0]
         return res
-    
-    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
-        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 
 class SmartGreedyPlayer(AbstractPlayer):
@@ -112,9 +105,6 @@ class SmartGreedyPlayer(AbstractPlayer):
                         my_state[i][j][res[2]] = 0
                         opp_state[i][j][res[2]] = 0
         return res
-    
-    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
-        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 
 class DeterminedPlayer(AbstractPlayer):
@@ -160,18 +150,17 @@ class DeterminedPlayer(AbstractPlayer):
             if not i in c3:
                 p3 = i
         return [p1,p2,p3]
-    
-    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
-        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
         
 
 class HumanPlayer(AbstractPlayer):
     def __init__(self):
         self.screen = None
         self.color = None
+        
     def set_params(self, scr, clr):
         self.screen = scr
         self.color = clr
+        
     def play(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
         self.screen.addstr(8, 50 , "Pick your move: ", self.color)
         curses.echo()
@@ -186,6 +175,10 @@ class HumanPlayer(AbstractPlayer):
         return [int(s[2])-1,int(s[3])-1,int(s[4])-1]
     
     def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
+        key = self.screen.getch()
+        if key == curses.KEY_MOUSE:
+            _, mx, my, _, _ = curses.getmouse()
+            self.screen.addstr(9, 50, str(mx) + "," + str(my))
         return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 
@@ -384,6 +377,7 @@ class ComplexGame:
         stdscr.getkey()
 
     def fancy_play(self, stdscr):
+        curses.mousemask(1)
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
@@ -398,6 +392,7 @@ class ComplexGame:
         stdscr.addstr(9, 8 , "Green move: ", curses.color_pair(2))
         stdscr.addstr(8, 30 , "Round: ")
         stdscr.addstr(9, 30 , "Score: ")
+        self.fancy_state_print(stdscr)
         while self.turn < self.game_length:
             stdscr.addstr(8, 39 , "      ")
             stdscr.addstr(8, 39 , str(self.turn + 1) + " / " + str(self.game_length))
