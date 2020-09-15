@@ -17,6 +17,9 @@ class AbstractPlayer(metaclass=abc.ABCMeta):
 class RandomPlayer(AbstractPlayer):
     def play(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
         return [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
+    
+    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
+        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 
 class GreedyPlayer(AbstractPlayer):
@@ -50,6 +53,9 @@ class GreedyPlayer(AbstractPlayer):
         m = min(third)
         res[2] = [i for i, j in enumerate(third) if j == m][0]
         return res
+    
+    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
+        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 
 class SmartGreedyPlayer(AbstractPlayer):
@@ -106,6 +112,9 @@ class SmartGreedyPlayer(AbstractPlayer):
                         my_state[i][j][res[2]] = 0
                         opp_state[i][j][res[2]] = 0
         return res
+    
+    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
+        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 
 class DeterminedPlayer(AbstractPlayer):
@@ -151,6 +160,9 @@ class DeterminedPlayer(AbstractPlayer):
             if not i in c3:
                 p3 = i
         return [p1,p2,p3]
+    
+    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
+        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
         
 
 class HumanPlayer(AbstractPlayer):
@@ -172,6 +184,9 @@ class HumanPlayer(AbstractPlayer):
         self.screen.addstr(8, 50 , "                        ", self.color)
         self.screen.addstr(9, 50 , "                        ", self.color)
         return [int(s[2])-1,int(s[3])-1,int(s[4])-1]
+    
+    def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
+        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 
 class ComplexGame:
@@ -229,9 +244,12 @@ class ComplexGame:
 
     def round_start(self):
         self.turn += 1
-        for i in range(0, self.new_pips):
-            self.red_pips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
-            self.green_pips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+        greenplacing = self.green_player.place_pips(self.green_disposable, self.red_disposable, self.green_score, self.red_score, self.turn, self.game_length, self.new_pips)
+        redplacing = self.red_player.place_pips(self.red_disposable,self.green_disposable, self.red_score, self.green_score, self.turn, self.game_length, self.new_pips)
+        for p in greenplacing:
+            self.green_pips[p[0]][p[1]][p[2]] += 1
+        for p in redplacing:
+            self.red_pips[p[0]][p[1]][p[2]] += 1
 
     def get_moves(self):
         self.prepare_disposable()
