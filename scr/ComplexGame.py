@@ -176,21 +176,40 @@ class HumanPlayer(AbstractPlayer):
             raise Exception("getPosFromMouse: Invalid coordinates " + str([a,b,c]))
         return [a, b, c]
         
-    def printNumber(self, p, n, color):
-        self.screen.addstr(p[0] + 3, 25*p[1]+ 6*p[2] + 8 + 2*self.order, str(n), color)
-        return
+    def printNumber(self, k, i, j, n, color):
+        if n == 0:
+            if self.order == 0:
+                s = " ."
+            else:
+                s = ". "
+            self.screen.addstr(k + 3, 25*i + 6*j + 8 + 2*self.order, s, self.colorN)
+            return
+        if n < 10:
+            s = " " + str(n)
+        else:
+            s = str(n)
+        self.screen.addstr(k + 3, 25*i + 6*j + 8 + 2*self.order, s, color)
 
     def __init__(self):
         self.screen = None
         self.color = None
         self.colorH = None
+        self.colorN = None
         self.order = -1
+        self.placements = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
         
-    def set_params(self, scr, clr, clrh, ord):
+    def set_params(self, scr, clr, clrH, clrN, ord):
         self.screen = scr
         self.color = clr
-        self.colorH = clrh
+        self.colorH = clrH
+        self.colorN = clrN
         self.order = ord
+        
+    def flushPlacements(self):
+        for k in range(3):
+            for i in range(3):
+                for j in range(3):
+                    self.placements[k][i][j] = 0
         
     def play(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
         self.screen.addstr(8, 50 , "Pick your move: ", self.color)
@@ -206,16 +225,40 @@ class HumanPlayer(AbstractPlayer):
         return [int(s[2])-1,int(s[3])-1,int(s[4])-1]
     
     def place_pips(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
-        a = b = c = -1
+        res = [ None for i in range(nPips)]
+        placed = 0
+        self.flushPlacements()
         while True:
             key = self.screen.getch()
-            if key != curses.KEY_MOUSE:
+            if key == 10 and placed == nPips:
+                #enter key
                 break
+            if key == 114 or key == 82:
+                # R key
+                placed = 0
+                self.flushPlacements()
+                for k in range(3):
+                    for i in range(3):
+                        for j in range(3):
+                            self.printNumber(k, i, j, my_state[k][i][j], self.color)
             if key == curses.KEY_MOUSE:
                 _, mx, my, _, _ = curses.getmouse()
-                p = HumanPlayer.getPosFromMouse(mx, my)
-                self.printNumber(p, 55, self.colorH)
-        return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
+                if placed < nPips:
+                    try:
+                        k,i,j = HumanPlayer.getPosFromMouse(mx, my)
+                        placed += 1
+                        self.placements[k][i][j] += 1
+                        self.printNumber(k, i, j, my_state[k][i][j] + self.placements[k][i][j], self.colorH)
+                    except:
+                        pass
+        indx = 0
+        for k in range(3):
+            for i in range(3):
+                for j in range(3):
+                    for m in range(self.placements[k][i][j]):
+                        res[indx] = [i, k, j]
+                        indx += 1
+        return res
 
 
 class ComplexGame:
@@ -402,7 +445,7 @@ class ComplexGame:
 
     def fancy_play_round(self, stdscr):
         self.round_start()
-        # self.fancy_state_print(stdscr)
+        self.fancy_state_print(stdscr)
         self.get_moves()
         self.fancy_print_moves(stdscr)
         self.fancy_state_highlight(stdscr)
@@ -413,7 +456,7 @@ class ComplexGame:
         self.fancy_state_print(stdscr)
         stdscr.getkey()
 
-    def fancy_play(self, stdscr):
+    def fancy_play(self, stdscr):        
         curses.mousemask(1)
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
@@ -421,15 +464,18 @@ class ComplexGame:
         curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_WHITE)
         curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_WHITE)
         if isinstance(self.green_player, HumanPlayer):
-            self.green_player.set_params(stdscr, curses.color_pair(2), curses.color_pair(4), 1)
+            self.green_player.set_params(stdscr, curses.color_pair(2), curses.color_pair(4), curses.color_pair(0), 1)
         if isinstance(self.red_player, HumanPlayer):
-            self.red_player.set_params(stdscr, curses.color_pair(1), curses.color_pair(3), 0)
+            self.red_player.set_params(stdscr, curses.color_pair(1), curses.color_pair(3), curses.color_pair(0), 0)
         stdscr.clear()
         stdscr.addstr(8, 8 , "Red move:   ", curses.color_pair(1))
         stdscr.addstr(9, 8 , "Green move: ", curses.color_pair(2))
         stdscr.addstr(8, 30 , "Round: ")
         stdscr.addstr(9, 30 , "Score: ")
         self.fancy_state_print(stdscr)
+        # while True:
+            # key = stdscr.getch()
+            # stdscr.addstr(0,0,str(key) + "   ")
         while self.turn < self.game_length:
             stdscr.addstr(8, 39 , "      ")
             stdscr.addstr(8, 39 , str(self.turn + 1) + " / " + str(self.game_length))
