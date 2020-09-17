@@ -18,7 +18,7 @@ class RandomPlayer(AbstractPlayer):
 
 class GreedyPlayer(AbstractPlayer):
     def play(self, my_state, opp_state, my_score, opp_score, turn, length, nPips):
-        res = [-1,-1,-1]
+        res = [-1, -1, -1]
         first = [0,0,0]
         for k in range(3):
             s = 0
