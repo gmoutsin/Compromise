@@ -228,19 +228,26 @@ class HumanPlayer(AbstractPlayer):
         res = [ None for i in range(nPips)]
         placed = 0
         self.flushPlacements()
+        self.screen.addstr(10, 50 , "Place your pips", self.color)
         while True:
             key = self.screen.getch()
             if key == 10 and placed == nPips:
                 #enter key
+                self.screen.addstr(9, 50 , "                             ", self.color)
+                self.screen.addstr(10, 50 , "                       ", self.color)
+                self.screen.addstr(11, 50 , "                       ", self.color)
                 break
             if key == 114 or key == 82:
                 # R key
                 placed = 0
                 self.flushPlacements()
+                self.screen.addstr(9, 50 , "Need " + str(nPips) + ", placed 0  ", self.color)
+                self.screen.addstr(10, 50 , "Place your pips        ", self.color)
+                self.screen.addstr(11, 50 , "                       ", self.color)
                 for k in range(3):
                     for i in range(3):
                         for j in range(3):
-                            self.printNumber(k, i, j, my_state[k][i][j], self.color)
+                            self.printNumber(i, k, j, my_state[k][i][j], self.color)
             if key == curses.KEY_MOUSE:
                 _, mx, my, _, _ = curses.getmouse()
                 if placed < nPips:
@@ -249,6 +256,10 @@ class HumanPlayer(AbstractPlayer):
                         placed += 1
                         self.placements[k][i][j] += 1
                         self.printNumber(k, i, j, my_state[k][i][j] + self.placements[k][i][j], self.colorH)
+                        self.screen.addstr(9, 50 , "Need " + str(nPips) + ", placed " + str(placed), self.color)
+                        if placed == nPips:
+                            self.screen.addstr(10, 50 , "Press Enter to accept", self.color)
+                            self.screen.addstr(11, 50 , "or R to reset", self.color)
                     except:
                         pass
         indx = 0
