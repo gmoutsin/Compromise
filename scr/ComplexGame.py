@@ -151,6 +151,10 @@ class DeterminedPlayer(AbstractPlayer):
                 p3 = i
         return [p1,p2,p3]
         
+        
+class OutOfGridException(Exception):
+    pass
+        
 
 class HumanPlayer(AbstractPlayer):
     @staticmethod
@@ -171,9 +175,9 @@ class HumanPlayer(AbstractPlayer):
         elif tmp < 18:
             c = 2
         if a > 2:
-            raise Exception("getPosFromMouse: Invalid coordinates " + str([a,b,c]))
+            raise OutOfGridException("getPosFromMouse: Invalid coordinates " + str([a,b,c]))
         if (a+1)*(b+1)*(c+1) == 0:
-            raise Exception("getPosFromMouse: Invalid coordinates " + str([a,b,c]))
+            raise OutOfGridException("getPosFromMouse: Invalid coordinates " + str([a,b,c]))
         return [a, b, c]
         
     def printNumber(self, k, i, j, n, color):
@@ -255,12 +259,12 @@ class HumanPlayer(AbstractPlayer):
                         k,i,j = HumanPlayer.getPosFromMouse(mx, my)
                         placed += 1
                         self.placements[k][i][j] += 1
-                        self.printNumber(k, i, j, my_state[k][i][j] + self.placements[k][i][j], self.colorH)
+                        self.printNumber(k, i, j, my_state[i][k][j] + self.placements[k][i][j], self.colorH)
                         self.screen.addstr(9, 50 , "Need " + str(nPips) + ", placed " + str(placed), self.color)
                         if placed == nPips:
                             self.screen.addstr(10, 50 , "Press Enter to accept", self.color)
                             self.screen.addstr(11, 50 , "or R to reset", self.color)
-                    except:
+                    except OutOfGridException:
                         pass
         indx = 0
         for k in range(3):
@@ -282,8 +286,8 @@ class ComplexGame:
         self.red_move = None
         self.game_length = length
         self.turn = 0
-        self.green_player = playerA
-        self.red_player = playerB
+        self.red_player = playerA 
+        self.green_player = playerB
         self.new_pips = nPips
         self.green_score = 0
         self.red_score = 0
@@ -326,8 +330,10 @@ class ComplexGame:
                     self.red_disposable[i][j][k] = self.red_pips[i][j][k]
 
     def round_start(self):
+        self.prepare_disposable()
         self.turn += 1
         greenplacing = self.green_player.place_pips(self.green_disposable, self.red_disposable, self.green_score, self.red_score, self.turn, self.game_length, self.new_pips)
+        self.prepare_disposable()
         redplacing = self.red_player.place_pips(self.red_disposable,self.green_disposable, self.red_score, self.green_score, self.turn, self.game_length, self.new_pips)
         for p in greenplacing:
             self.green_pips[p[0]][p[1]][p[2]] += 1
@@ -496,6 +502,6 @@ class ComplexGame:
 
 if __name__ == "__main__":
     pA = HumanPlayer()
-    pB = DeterminedPlayer()
-    g = ComplexGame(pB, pA, 12, 10)
+    pB = SmartGreedyPlayer()
+    g = ComplexGame(pA, pB, 12, 10)
     curses.wrapper(g.fancy_play)
