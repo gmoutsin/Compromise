@@ -297,7 +297,7 @@ class CompromiseGame:
         self.greenDisposable = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
         self.redDisposable = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
 
-    def restartGame(self):
+    def resetGame(self):
         self.turn = 0
         self.greenMove = None
         self.redMove = None
@@ -313,15 +313,7 @@ class CompromiseGame:
             raise Exception("Green Player is not of valid type: " + str(type(playerA)))
         if not (isinstance(playerB, AbstractPlayer)):
             raise Exception("Red Player is not of valid type: " + str(type(playerB)))
-        self.turn = 0
-        self.greenMove = None
-        self.redMove = None
-        self.greenScore = 0
-        self.redScore = 0
-        self.greenPips = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
-        self.redPips = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
-        self.greenDisposable = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
-        self.redDisposable = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
+        self.resetGame()
 
     def prepareDisposable(self):
         for i in range(3):
@@ -385,7 +377,7 @@ class CompromiseGame:
     def play(self):
         while self.turn < self.gameLength:
             self.playRound()
-        return [self.greenScore, self.redScore]
+        return [self.redScore, self.greenScore]
 
     def fancyStatePrint(self, stdscr):
         for k in range(3):
@@ -511,3 +503,15 @@ if __name__ == "__main__":
     pB = SmartGreedyPlayer()
     g = CompromiseGame(pA, pB, 12, 10, True)
     curses.wrapper(g.fancyPlay)
+    
+    # score = [0,0,0]
+    # for i in range(1000):
+        # g.resetGame()
+        # res = g.play()
+        # if res[0] > res[1]:
+            # score[0] += 1
+        # elif res[1] > res[0]:
+            # score[2] += 1
+        # else:
+            # score[1] += 1
+    # print(score)
