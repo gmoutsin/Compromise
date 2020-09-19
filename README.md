@@ -62,4 +62,4 @@ I don't know.
 
 This game is a modified version of a board game that a student created as an assignment for a board game design module in Warwick University. As such I do not know who has exactly what rights for this game. I am in the process of figuring this out, as well as finding the name of the student in order to give them credit. Until then assume that all rights are reserved.
 
-The code was written solely by me and is shared with the GPL v3.0 licence.
+The code was written solely by me and is shared under the GPL v3.0 licence.
