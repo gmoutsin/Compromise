@@ -19,11 +19,11 @@ The game continues for a predetermined number of turns.
 
 ### Simple Game
 
-The rules are practically the same as in the complex version of the game. The only difference is that the players do not choose where the pips should be placed, they are placed randomly.
+The rules are practically the same as in the complex version of the game. The only difference is that players do not choose where the pips should be placed, instead they are placed randomly.
 
 ## Interface
 
-### Player Class
+### Player Classes
 
 The script defined a player abstract class named `AbstractPlayer`. Any player class has to extend the abstract player class and define a method named `play`. This method takes as input the state of the game and outputs the player's move. The move has to be an array of length 3 and its elements can only be the numbers 0, 1 and 2.
 
@@ -31,14 +31,14 @@ The abstract player class defines another mathod called `placePips`. This method
 
 #### Predefined Players
 
-There are 5 predefined players. The class `HumanPlayer` provided a way for a human to play the game. The rest of the players in order of difficulty are:
+There are 5 predefined players. The class `HumanPlayer` provides a way for a human to play the game. The rest of the players in order of difficulty are:
 
 1. `RandomPlayer`
 1. `DeterminedPlayer`
 1. `GreedyPlayer`
 1. `SmartGreedyPlayer`
 
-All of the predefined players classes, place pips randomly. 
+All of the predefined players classes, place pips randomly. This means that a human can easily win a complex game against any of them.
 
 ### Game Class
 
@@ -50,7 +50,7 @@ The method `newPlayers` resets the game and defines new players.
 
 The method `play` plays the game and returns a 2-array with the score. Notice that if at least one of the players is an instance of the class `HumanPlayer`, this will throw an error.
 
-The method `fancyPlay` should be used when at least one of the players is an instance of the class `HumanPlayer`. This method uses `curses` and I have tried it on linux and on Bash termimal on Windows 10. I'm not sure if it can be made to run natively in Windows.
+The method `fancyPlay` should be used when at least one of the players is an instance of the class `HumanPlayer`. This method uses `curses` and I have tried it on linux and on Bash termimal on Windows 10. I'm not sure if it can be made to run natively in Windows. The proper way to call this method is by wrapping it in `curses.wrapper`, see the script. if the script is not modified, it will start a simple game with the first player being `HumanPlayer` and the second being `SmartGreedyPlayer`.
 
 ## Who has the rights for this game?
 
@@ -58,8 +58,8 @@ The method `fancyPlay` should be used when at least one of the players is an ins
 
 I don't know.
 
-#### Long answer
+#### Longish answer
 
-This game is a modified version of a game that a student created as an assignment for a board game design module in Warwick University. As such I do not know who has exactly what rights for this game. I am in the process of figuring this out, as well as finding the name of the student in order to give credit. Until then assume that all rights are reserved.
+This game is a modified version of a board game that a student created as an assignment for a board game design module in Warwick University. As such I do not know who has exactly what rights for this game. I am in the process of figuring this out, as well as finding the name of the student in order to give them credit. Until then assume that all rights are reserved.
 
-The code was written solely by me and GPL 3.0 applies.
+The code was written solely by me and is shared with the GPL v3.0 licence.

@@ -501,11 +501,11 @@ class CompromiseGame:
 if __name__ == "__main__":
     pA = HumanPlayer()
     pB = SmartGreedyPlayer()
-    g = CompromiseGame(pA, pB, 12, 10, True)
+    g = CompromiseGame(pA, pB, 12, 10, False)
     curses.wrapper(g.fancyPlay)
     
     # score = [0,0,0]
-    # for i in range(1000):
+    # for i in range(100):
         # g.resetGame()
         # res = g.play()
         # if res[0] > res[1]:
