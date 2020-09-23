@@ -1,21 +1,18 @@
 import curses
-import abc
 import random
 import re
 import math
 
 
-class AbstractPlayer(metaclass=abc.ABCMeta):
-    @abc.abstractmethod
+class AbstractPlayer:
     def play(self, myState, oppState, myScore, oppScore, turn, length, nPips):
-        return
+        return [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
     
     def placePips(self, myState, oppState, myScore, oppScore, turn, length, nPips):
         return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 class RandomPlayer(AbstractPlayer):
-    def play(self, myState, oppState, myScore, oppScore, turn, length, nPips):
-        return [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
+    pass
 
 
 class GreedyPlayer(AbstractPlayer):
@@ -528,7 +525,7 @@ class CompromiseGame:
 if __name__ == "__main__":
     pA = HumanPlayer()
     pB = SmartGreedyPlayer()
-    g = CompromiseGame(pA, pB, 12, 10)
+    g = CompromiseGame(pA, pB, 12, 5)
     curses.wrapper(g.fancyPlay)
     
     # score = [0,0,0]
