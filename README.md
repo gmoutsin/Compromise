@@ -7,21 +7,21 @@ There are two versions of the game.
 
 ### Complex Game
 
-There are 2 players and 3 3x3 grids. In the beginning of the turn each player receives a pool of pips and then places them on the grid in any combination. Players do this without seeing the choices of their opponent. After the pips are placed, the board will look something like this:
+There are two players and 3 3x3 grids. In the beginning of each turn each player receives a the same amount of pips and then places them on the grid in on any location and any combination. Players do this without seeing the choices of their opponent. After the pips are placed, the board will look something like this:
 
 ![pre-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/premove.png)
 
 Then each player is asked to choose a move, i.e they choose one grid, one row and one column. This choise is given by 3 numbers, for example 123 refers to the first grid, the second row and the third column. Both players make this choice without knowing what their opponent chose.
 
-Once both players choose, the choices are revealed. Then each grid, row and column that any player chose is "frozen". For example, if the first player chooses 123 and the second 213, then every position on the first and the second grids are frozen. Moreover the first and the second rows in every grid are frozen as well as the third column of every grid. The non-frozen position will be highlighted:
+Once both players choose, the choices are revealed. Then each grid, row and column that any player chose is "frozen". For example, if the first player chooses 123 and the second 213, then every position on the 1st and the 2nd grids are frozen. Moreover the 1st and the 2nd rows in every grid are frozen as well as the 3rd column of every grid. The non-frozen position will be highlighted:
 
 ![post-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/postmove.png)
 
-Then the pips in the non-frozen positions are collected and are added to the player's respective score. In the above example the pips at positions (3,3,1) and (3,3,2) are collected:
+Then the pips in the non-frozen positions are removed from the game and the are added to the player's respective score. In the above example the pips at positions (3,3,1) and (3,3,2) are collected:
 
 ![pre-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/score.png)
 
-The game continues for a predetermined number of turns and the player with the most points win. There is an option in case of a tie to continue the game until one player scores more points than the other. 
+The game continues for a predetermined number of turns and the player with the most points win. Notice that pips are not removed between turns, only the pips that are scored are removed. There is an option in case of a tie to continue the game until one player scores more points than the other. 
 
 ### Simple Game
 
@@ -35,7 +35,7 @@ Just like the complex game with the only difference that the players do not choo
 
 ### Player Classes
 
-The script defined a player abstract class named `AbstractPlayer`. Any player class has to extend the abstract player class and define a method named `play`. This method takes as input the state of the game and outputs the player's move. The move has to be an array of length 3 and its elements can only be the numbers 0, 1 and 2.
+The script defined a player abstract class named `AbstractPlayer`. Any player class has to extend the abstract player class. This method takes as input the state of the game and outputs the player's move. The move has to be an array of length 3 and its elements can only be the numbers 0, 1 and 2.
 
 The abstract player class defines another mathod called `placePips`. This method takes as input the state of the game and outputs a list of coordinates of where the pips should be placed. Each coordinate should be an array of length 3 and its elements can only be the numbers 0, 1 and 2. The method provided in  `AbstractPlayer` places the pips randomly.
 
