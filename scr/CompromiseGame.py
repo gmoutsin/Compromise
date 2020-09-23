@@ -202,12 +202,12 @@ class HumanPlayer(AbstractPlayer):
         self.order = -1
         self.placements = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
         
-    def setParams(self, scr, clr, clrH, clrN, ord):
-        self.screen = scr
-        self.color = clr
-        self.colorH = clrH
-        self.colorN = clrN
-        self.order = ord
+    def setParams(self, screenref, colourDefault, colourHighlight, colourNeutral, playOrder):
+        self.screen = screenref
+        self.color = colourDefault
+        self.colorH = colourHighlight
+        self.colorN = colourNeutral
+        self.order = playOrder
         
     def flushPlacements(self):
         for k in range(3):
@@ -341,9 +341,9 @@ class CompromiseGame:
 
     def getMoves(self):
         self.prepareDisposable()
-        self.greenMove = self.greenPlayer.play(self.greenDisposable, self.redDisposable, self.greenScore, self.redScore, self.turn, self.gameLength, self.newPips)
-        self.prepareDisposable()
         self.redMove = self.redPlayer.play(self.redDisposable,self.greenDisposable, self.redScore, self.greenScore, self.turn, self.gameLength, self.newPips)
+        self.prepareDisposable()
+        self.greenMove = self.greenPlayer.play(self.greenDisposable, self.redDisposable, self.greenScore, self.redScore, self.turn, self.gameLength, self.newPips)
         if not isinstance(self.greenMove, list):
             raise Exception("Green Player's move is not a list: " + str(self.greenMove))
         if not isinstance(self.redMove, list):
@@ -459,8 +459,26 @@ class CompromiseGame:
         stdscr.addstr(" - ")
         stdscr.addstr(gs, curses.color_pair(2))
 
+    def fancyRoundStart(self, stdscr):
+        self.turn += 1
+        if self.complexQ:
+            self.prepareDisposable()
+            self.fancyStatePrint(stdscr)
+            redplacing = self.redPlayer.placePips(self.redDisposable,self.greenDisposable, self.redScore, self.greenScore, self.turn, self.gameLength, self.newPips)
+            self.prepareDisposable()
+            self.fancyStatePrint(stdscr)
+            greenplacing = self.greenPlayer.placePips(self.greenDisposable, self.redDisposable, self.greenScore, self.redScore, self.turn, self.gameLength, self.newPips)
+            for p in greenplacing:
+                self.greenPips[p[0]][p[1]][p[2]] += 1
+            for p in redplacing:
+                self.redPips[p[0]][p[1]][p[2]] += 1
+        else:
+            for i in range(0, self.newPips):
+                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+
     def fancyPlayRound(self, stdscr):
-        self.roundStart()
+        self.fancyRoundStart(stdscr)
         self.fancyStatePrint(stdscr)
         self.getMoves()
         self.fancyPrintMoves(stdscr)
