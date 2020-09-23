@@ -7,13 +7,19 @@ There are two versions of the game.
 
 ### Complex Game
 
-There are 2 players and 3 3x3 grids. In the beginning of the turn each player receives a pool of pips and then places them on the grid in any combination. Players do this without seeing the choices of their opponent.
+There are 2 players and 3 3x3 grids. In the beginning of the turn each player receives a pool of pips and then places them on the grid in any combination. Players do this without seeing the choices of their opponent. After the pips are placed, the board will look something like this:
 
-After the pips are placed, each player takes their move, i.e they choose one grid, one row and one column. This choise is given by 3 numbers, for example 123 refers to the first grid, the second row and the third column. Both players make this choice without knowing what their opponet chose.
+![pre-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/premove.png)
 
-Once both players choose, the choices are revealed. Then each grid, row and column that any player chose is "frozen". For example, if the first player chooses 123 and the second 213, then every position on the first and the second grids are frozen. Moreover the first and the second row in the third grid is frozen as well as the third row.
+Then each player is asked to choose a move, i.e they choose one grid, one row and one column. This choise is given by 3 numbers, for example 123 refers to the first grid, the second row and the third column. Both players make this choice without knowing what their opponent chose.
 
-Then the pips in the non-frozen positions are collected and are added to the player's respective score. In the above example the pips at positions (3,3,1) and (3,3,2) are collected.
+Once both players choose, the choices are revealed. Then each grid, row and column that any player chose is "frozen". For example, if the first player chooses 123 and the second 213, then every position on the first and the second grids are frozen. Moreover the first and the second row in the third grid is frozen as well as the third row. The non-frozen position will be highlighted:
+
+![post-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/postmove.png)
+
+Then the pips in the non-frozen positions are collected and are added to the player's respective score. In the above example the pips at positions (3,3,1) and (3,3,2) are collected:
+
+![pre-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/score.png)
 
 The game continues for a predetermined number of turns and the player with the most points win. There is an option in case of a tie to continue the game until one player scores more points than the other. 
 
@@ -67,3 +73,6 @@ I don't know.
 This game is a modified version of a board game that a student created as an assignment for a board game design module in Warwick University. As such I do not know who has exactly what rights for this game. I am in the process of figuring this out, as well as finding the name of the student in order to give them credit. Until then assume that all rights are reserved.
 
 The code was written solely by me and is shared under the GPL v3.0 licence.
+
+
+
