@@ -277,11 +277,12 @@ class HumanPlayer(AbstractPlayer):
 
 
 class CompromiseGame:
-    def __init__(self, playerA, playerB, nPips, length, complex = False):
+    def __init__(self, playerA, playerB, nPips, length, complex = False, noTies = True):
         if not (isinstance(playerA, AbstractPlayer)):
             raise Exception("Green Player is not of valid type: " + str(type(playerA)))
         if not (isinstance(playerB, AbstractPlayer)):
             raise Exception("Red Player is not of valid type: " + str(type(playerB)))
+        self.noties = noTies
         self.complexQ = complex
         self.greenMove = None
         self.redMove = None
@@ -375,7 +376,7 @@ class CompromiseGame:
         self.updateScore()
 
     def play(self):
-        while self.turn < self.gameLength:
+        while self.turn < self.gameLength or (self.noties and self.redScore == self.greenScore):
             self.playRound()
         return [self.redScore, self.greenScore]
 
@@ -491,17 +492,24 @@ class CompromiseGame:
         # while True:
             # key = stdscr.getch()
             # stdscr.addstr(0,0,str(key) + "   ")
-        while self.turn < self.gameLength:
+        while self.turn < self.gameLength or (self.noties and self.redScore == self.greenScore):
             stdscr.addstr(8, 39 , "      ")
             stdscr.addstr(8, 39 , str(self.turn + 1) + " / " + str(self.gameLength))
             self.fancyPlayRound(stdscr)
+        if self.redScore > self.greenScore:
+            stdscr.addstr(9, 50 , "Player 1 won!       ", curses.color_pair(1))
+        elif self.redScore < self.greenScore:
+            stdscr.addstr(9, 50 , "Player 2 won!       ", curses.color_pair(2))
+        else:
+            stdscr.addstr(9, 50 , "Game tied!          ", curses.color_pair(0))
+        stdscr.getkey()
 
 
 
 if __name__ == "__main__":
     pA = HumanPlayer()
     pB = SmartGreedyPlayer()
-    g = CompromiseGame(pA, pB, 12, 10, False)
+    g = CompromiseGame(pA, pB, 12, 10)
     curses.wrapper(g.fancyPlay)
     
     # score = [0,0,0]
