@@ -469,6 +469,7 @@ class CompromiseGame:
         self.updateScore()
         self.fancyDeleteMoves(stdscr)
         self.fancyPrintScore(stdscr)
+        stdscr.getkey()
         self.fancyStatePrint(stdscr)
         stdscr.getkey()
 
