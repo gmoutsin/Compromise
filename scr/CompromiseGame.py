@@ -484,7 +484,6 @@ class CompromiseGame:
         self.updateScore()
         self.fancyDeleteMoves(stdscr)
         self.fancyPrintScore(stdscr)
-        stdscr.getkey()
         self.fancyStatePrint(stdscr)
         stdscr.getkey()
 
@@ -525,7 +524,7 @@ class CompromiseGame:
 if __name__ == "__main__":
     pA = HumanPlayer()
     pB = SmartGreedyPlayer()
-    g = CompromiseGame(pA, pB, 12, 5)
+    g = CompromiseGame(pA, pB, 30, 5)
     curses.wrapper(g.fancyPlay)
     
     # score = [0,0,0]
