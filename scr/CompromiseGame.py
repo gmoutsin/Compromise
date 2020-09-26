@@ -275,6 +275,7 @@ class HumanPlayer(AbstractPlayer):
 
 class CompromiseGame:
     def __init__(self, playerA, playerB, nPips, length, gametype = "s", noTies = True):
+    # in reality the if the game type is not "s" or "g" then it is complex
         if not (isinstance(playerA, AbstractPlayer)):
             raise Exception("Green Player is not of valid type: " + str(type(playerA)))
         if not (isinstance(playerB, AbstractPlayer)):
@@ -322,7 +323,11 @@ class CompromiseGame:
 
     def roundStart(self):
         self.turn += 1
-        if not self.type == "s":
+        if self.type == "s":
+            for i in range(0, self.newPips):
+                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+        else:
             self.prepareDisposable()
             greenplacing = self.greenPlayer.placePips(self.greenDisposable, self.redDisposable, self.greenScore, self.redScore, self.turn, self.gameLength, self.newPips)
             self.prepareDisposable()
@@ -331,13 +336,12 @@ class CompromiseGame:
                 self.greenPips[p[0]][p[1]][p[2]] += 1
             for p in redplacing:
                 self.redPips[p[0]][p[1]][p[2]] += 1
-        else:
-            for i in range(0, self.newPips):
-                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
-                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
 
     def getMoves(self):
-        if not self.type == "g":
+        if self.type == "g":
+            self.redMove = [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
+            self.greenMove = [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
+        else:
             self.prepareDisposable()
             self.redMove = self.redPlayer.play(self.redDisposable,self.greenDisposable, self.redScore, self.greenScore, self.turn, self.gameLength, self.newPips)
             self.prepareDisposable()
@@ -355,10 +359,7 @@ class CompromiseGame:
                     raise Exception("Green Player's move is not between 0 and 2: " + str(self.greenMove))
                 if self.redMove[i] > 2 or self.redMove[i] < 0:
                     raise Exception("Red Player's move is not between 0 and 2: " + str(self.redMove))
-        else:
-            self.redMove = [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
-            self.greenMove = [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
-
+    
     def updateScore(self):
         for i in range(0, 3):
             for j in range(0, 3):
@@ -462,7 +463,11 @@ class CompromiseGame:
 
     def fancyRoundStart(self, stdscr):
         self.turn += 1
-        if not self.type == "s":
+        if self.type == "s":
+            for i in range(0, self.newPips):
+                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+        else:
             self.prepareDisposable()
             self.fancyStatePrint(stdscr)
             redplacing = self.redPlayer.placePips(self.redDisposable,self.greenDisposable, self.redScore, self.greenScore, self.turn, self.gameLength, self.newPips)
@@ -473,10 +478,6 @@ class CompromiseGame:
                 self.greenPips[p[0]][p[1]][p[2]] += 1
             for p in redplacing:
                 self.redPips[p[0]][p[1]][p[2]] += 1
-        else:
-            for i in range(0, self.newPips):
-                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
-                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
 
     def fancyPlayRound(self, stdscr):
         self.fancyRoundStart(stdscr)
