@@ -274,13 +274,14 @@ class HumanPlayer(AbstractPlayer):
 
 
 class CompromiseGame:
-    def __init__(self, playerA, playerB, nPips, length, complex = False, noTies = True):
+    def __init__(self, playerA, playerB, nPips, length, gametype = "s", noTies = True):
+    # in reality the if the game type is not "s" or "g" then it is complex
         if not (isinstance(playerA, AbstractPlayer)):
             raise Exception("Green Player is not of valid type: " + str(type(playerA)))
         if not (isinstance(playerB, AbstractPlayer)):
             raise Exception("Red Player is not of valid type: " + str(type(playerB)))
         self.noties = noTies
-        self.complexQ = complex
+        self.type = gametype
         self.greenMove = None
         self.redMove = None
         self.gameLength = length
@@ -322,7 +323,11 @@ class CompromiseGame:
 
     def roundStart(self):
         self.turn += 1
-        if self.complexQ:
+        if self.type == "s":
+            for i in range(0, self.newPips):
+                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+        else:
             self.prepareDisposable()
             greenplacing = self.greenPlayer.placePips(self.greenDisposable, self.redDisposable, self.greenScore, self.redScore, self.turn, self.gameLength, self.newPips)
             self.prepareDisposable()
@@ -331,30 +336,30 @@ class CompromiseGame:
                 self.greenPips[p[0]][p[1]][p[2]] += 1
             for p in redplacing:
                 self.redPips[p[0]][p[1]][p[2]] += 1
-        else:
-            for i in range(0, self.newPips):
-                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
-                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
 
     def getMoves(self):
-        self.prepareDisposable()
-        self.redMove = self.redPlayer.play(self.redDisposable,self.greenDisposable, self.redScore, self.greenScore, self.turn, self.gameLength, self.newPips)
-        self.prepareDisposable()
-        self.greenMove = self.greenPlayer.play(self.greenDisposable, self.redDisposable, self.greenScore, self.redScore, self.turn, self.gameLength, self.newPips)
-        if not isinstance(self.greenMove, list):
-            raise Exception("Green Player's move is not a list: " + str(self.greenMove))
-        if not isinstance(self.redMove, list):
-            raise Exception("Red Player's move is not a list: " + str(self.redMove))
-        if not len(self.greenMove) == 3:
-            raise Exception("Green Player's move's length has to be 3: " + str(self.greenMove))
-        if not len(self.redMove) == 3:
-            raise Exception("Red Player's move's length has to be 3: " + str(self.redMove))
-        for i in range(3):
-            if self.greenMove[i] > 2 or self.greenMove[i] < 0:
-                raise Exception("Green Player's move is not between 0 and 2: " + str(self.greenMove))
-            if self.redMove[i] > 2 or self.redMove[i] < 0:
-                raise Exception("Red Player's move is not between 0 and 2: " + str(self.redMove))
-
+        if self.type == "g":
+            self.redMove = [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
+            self.greenMove = [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
+        else:
+            self.prepareDisposable()
+            self.redMove = self.redPlayer.play(self.redDisposable,self.greenDisposable, self.redScore, self.greenScore, self.turn, self.gameLength, self.newPips)
+            self.prepareDisposable()
+            self.greenMove = self.greenPlayer.play(self.greenDisposable, self.redDisposable, self.greenScore, self.redScore, self.turn, self.gameLength, self.newPips)
+            if not isinstance(self.greenMove, list):
+                raise Exception("Green Player's move is not a list: " + str(self.greenMove))
+            if not isinstance(self.redMove, list):
+                raise Exception("Red Player's move is not a list: " + str(self.redMove))
+            if not len(self.greenMove) == 3:
+                raise Exception("Green Player's move's length has to be 3: " + str(self.greenMove))
+            if not len(self.redMove) == 3:
+                raise Exception("Red Player's move's length has to be 3: " + str(self.redMove))
+            for i in range(3):
+                if self.greenMove[i] > 2 or self.greenMove[i] < 0:
+                    raise Exception("Green Player's move is not between 0 and 2: " + str(self.greenMove))
+                if self.redMove[i] > 2 or self.redMove[i] < 0:
+                    raise Exception("Red Player's move is not between 0 and 2: " + str(self.redMove))
+    
     def updateScore(self):
         for i in range(0, 3):
             for j in range(0, 3):
@@ -458,7 +463,11 @@ class CompromiseGame:
 
     def fancyRoundStart(self, stdscr):
         self.turn += 1
-        if self.complexQ:
+        if self.type == "s":
+            for i in range(0, self.newPips):
+                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+        else:
             self.prepareDisposable()
             self.fancyStatePrint(stdscr)
             redplacing = self.redPlayer.placePips(self.redDisposable,self.greenDisposable, self.redScore, self.greenScore, self.turn, self.gameLength, self.newPips)
@@ -469,10 +478,6 @@ class CompromiseGame:
                 self.greenPips[p[0]][p[1]][p[2]] += 1
             for p in redplacing:
                 self.redPips[p[0]][p[1]][p[2]] += 1
-        else:
-            for i in range(0, self.newPips):
-                self.redPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
-                self.greenPips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
 
     def fancyPlayRound(self, stdscr):
         self.fancyRoundStart(stdscr)
