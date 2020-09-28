@@ -3,7 +3,7 @@
 
 ## Rules
 
-There are two versions of the game.
+There are three versions of the game.
 
 ### Complex Game
 
