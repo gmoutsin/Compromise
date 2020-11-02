@@ -27,7 +27,7 @@ The game continues for a predetermined number of turns and the player with the m
 
 The rules are practically the same as in the complex version of the game. The only difference is that players do not choose where the pips should be placed, instead they are placed randomly.
 
-### Gamble Game (to be added)
+### Gamble Game
 
 Just like the complex game with the only difference that the players do not choose the grids, rows and columns, this is chosen for them by the computer at random.
 
@@ -35,9 +35,29 @@ Just like the complex game with the only difference that the players do not choo
 
 ### Player Classes
 
-The script defined a player abstract class named `AbstractPlayer`. Any player class has to extend the abstract player class. This method takes as input the state of the game and outputs the player's move. The move has to be an array of length 3 and its elements can only be the numbers 0, 1 and 2. The method provided in  `AbstractPlayer` chooses a random move.
+The script defined a player abstract class named `AbstractPlayer`. This class defines two methods: `play` and `placePips`. Both methods ignore the state of the game and give a random valid move each time they are called.
 
-The abstract player class defines another method called `placePips`. This method takes as input the state of the game and outputs a list of coordinates of where the pips should be placed. Each coordinate should be an array of length 3 and its elements can only be the numbers 0, 1 and 2. The method provided in  `AbstractPlayer` places the pips randomly.
+#### Custom Players
+
+Any player class has to extend the `AbstractPlayer` class and should overwrite the two methods `play` and `placePips`, though strictly speaking this is not a requirement.
+
+The method `play` takes as input the state of the game and outputs the player's move. The signature of the function is `play(myState, oppState, myScore, oppScore, turn, length, nPips)` and it is called automatically by the game class. It's parameters are:
+* `myState`: A 3x3x3 array with the number of player's pips at each location of the board.
+* `oppState`: A 3x3x3 array with the number of opponents's pips at each location of the board.
+* `myScore`: An the current score of the player.
+* `oppScore`: An the current score of the opponent.
+* `turn`: The current turn number.
+* `length`: The length of the game. This is specified at the construction of the game object.
+* `nPips`: The number of pips each player gets each turn. This is specified at the construction of the game object.
+
+All the arguments are integers.
+
+The method has to return a valid move, i.e. an array of length 3 and its elements can only be the numbers 0, 1 and 2. Notie that because in python array indices start at 0, a valid move is not three digit number with the digits 1,2,3.
+
+The method `placePips` takes as input the state of the game and outputs the list of coordinates of where the pips should be placed. The signature of the function is `placePips(myState, oppState, myScore, oppScore, turn, length, nPips)`, it is called automatically by the game class and its parameters are the same as the ones of the method `play`.
+
+The method has to return an array of length equal to `nPips` and each element of the array is an array of length 3 and its elements can only be the numbers 0, 1 and 2.
+
 
 #### Predefined Players
 
