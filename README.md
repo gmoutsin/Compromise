@@ -52,7 +52,7 @@ The method `play` takes as input the state of the game and outputs the player's 
 
 All the arguments are integers.
 
-The method has to return a valid move, i.e. an array of length 3 and its elements can only be the numbers 0, 1 and 2. Notie that because in python array indices start at 0, a valid move is not three digit number with the digits 1,2,3.
+The method has to return a valid move, i.e. an array of length 3 and its elements can only be the numbers 0, 1 and 2. Notice that because in python array indices start at 0, a valid move is not three digit number with the digits 1,2,3.
 
 The method `placePips` takes as input the state of the game and outputs the list of coordinates of where the pips should be placed. The signature of the function is `placePips(myState, oppState, myScore, oppScore, turn, length, nPips)`, it is called automatically by the game class and its parameters are the same as the ones of the method `play`.
 
@@ -61,7 +61,7 @@ The method has to return an array of length equal to `nPips` and each element of
 
 #### Predefined Players
 
-There are 5 predefined players. The class `HumanPlayer` provides a way for a human to play the game. The pips are placed using the mouse and the placement is reset by pressing r. The move is should be a string of three numbers between 1 and 3 without any delimiters.
+There are 5 predefined players. The class `HumanPlayer` provides a way for a human to play the game. The pips are placed using the mouse and the placement is reset by pressing r. The move should be a string of three numbers between 1 and 3 without any delimiters.
 
 The rest of the players in order of difficulty are:
 
