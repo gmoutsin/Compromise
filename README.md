@@ -7,17 +7,17 @@ There are three versions of the game.
 
 ### Complex Game
 
-There are two players and 3 3x3 grids. In the beginning of each turn each player receives the same amount of pips and then places them on the grid in on any location and any combination. Players do this without seeing the choices of their opponent. After the pips are placed, the board will look something like this:
+There are two players and three 3x3 grids. At the beginning of each turn each player receives the same amount of pips and then places them on the grid in any location and in any combination. Players do this without seeing the choices of their opponent. After the pips are placed, the board will look something like this:
 
 ![pre-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/premove.png)
 
 Then each player is asked to choose a move, i.e they choose one grid, one row and one column. This choice is given by 3 numbers, for example 123 refers to the first grid, the second row and the third column. Both players make this choice without knowing what their opponent chose.
 
-Once both players choose, the choices are revealed. Then each grid, row and column that any player chose is "frozen". For example, if the first player chooses 123 and the second 213, then every position on the 1st and the 2nd grids are frozen. Moreover the 1st and the 2nd rows in every grid are frozen as well as the 3rd column of every grid. The non-frozen position will be highlighted:
+Once both players choose, the choices are revealed. Then each grid, row and column that any player chose is "frozen". For example, if the first player chooses 123 and the second 213, then every position on the 1st and the 2nd grid is frozen. Moreover, the 1st and the 2nd rows in every grid are frozen as well as the 3rd column of every grid. The non-frozen position will be highlighted:
 
 ![post-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/postmove.png)
 
-Then the pips in the non-frozen positions are removed from the game and they are added to the player's respective score. In the above example the pips at positions (3,3,1) and (3,3,2) are collected:
+Next, the pips in the non-frozen positions are removed from the game and they are added to the player's respective score. In the above example, the pips at positions (3,3,1) and (3,3,2) are collected:
 
 ![pre-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/score.png)
 
@@ -35,17 +35,17 @@ Just like the complex game with the only difference that the players do not choo
 
 ### Player Classes
 
-The script defined a player abstract class named `AbstractPlayer`. This class defines two methods: `play` and `placePips`. Both methods ignore the state of the game and give a random valid move each time they are called.
+The script defines a player abstract class named `AbstractPlayer`. This class defines two methods: `play` and `placePips`. Both methods ignore the state of the game and give a random valid move each time they are called.
 
 #### Custom Players
 
 Any player class has to extend the `AbstractPlayer` class and should overwrite the two methods `play` and `placePips`, though strictly speaking this is not a requirement.
 
-The method `play` takes as input the state of the game and outputs the player's move. The signature of the function is `play(myState, oppState, myScore, oppScore, turn, length, nPips)` and it is called automatically by the game class. It's parameters are:
-* `myState`: A 3x3x3 array with the number of player's pips at each location of the board.
-* `oppState`: A 3x3x3 array with the number of opponents's pips at each location of the board.
-* `myScore`: An the current score of the player.
-* `oppScore`: An the current score of the opponent.
+The method `play` takes as input the state of the game and outputs the player's move. The signature of the function is `play(myState, oppState, myScore, oppScore, turn, length, nPips)` and it is called automatically by the game class. Its parameters are:
+* `myState`: A 3x3x3 array with the number of player's pips in each location of the board.
+* `oppState`: A 3x3x3 array with the number of opponents's pips in each location of the board.
+* `myScore`: The current score of the player.
+* `oppScore`: The current score of the opponent.
 * `turn`: The current turn number.
 * `length`: The length of the game. This is specified at the construction of the game object.
 * `nPips`: The number of pips each player gets each turn. This is specified at the construction of the game object.
@@ -92,7 +92,7 @@ I don't know.
 
 #### Longer answer
 
-This game is a modified version of a board game that a student created as an assignment for a board game design module in Warwick University. As such I do not know who has exactly what rights for this game. I am in the process of figuring this out, as well as finding the name of the student in order to give them credit. Until then assume that all rights are reserved.
+This game is a modified version of a board game that a student created as an assignment for a board game design module at Warwick University. As such I do not know who has exactly what rights for this game. I am in the process of figuring this out, as well as finding the name of the student in order to give them credit. Until then assume that all rights are reserved.
 
 The code was written solely by me and is shared under the GPL v3.0 license.
 
