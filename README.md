@@ -84,17 +84,6 @@ The method `play` plays the game and returns a 2-array with the score. Notice th
 
 The method `fancyPlay` should be used when at least one of the players is an instance of the class `HumanPlayer`. This method uses `curses` and I have tried it on linux and on Bash terminal on Windows 10. I'm not sure if it can be made to run natively in Windows and I hope it runs on macOS. The proper way to call this method is by wrapping it in `curses.wrapper`, see the script. Unless the script is modified, it will start a simple game with the first player being `HumanPlayer` and the second being `SmartGreedyPlayer`.
 
-## Who has the rights for this game?
+## Licence
 
-#### Short answer
-
-I don't know.
-
-#### Longer answer
-
-This game is a modified version of a board game that a student created as an assignment for a board game design module at Warwick University. As such I do not know who has exactly what rights for this game. I am in the process of figuring this out, as well as finding the name of the student in order to give them credit. Until then assume that all rights are reserved.
-
-The code was written solely by me and is shared under the GPL v3.0 license.
-
-
-
+This game is based on a board game which was created by Thomas James. Thomas, then a student at Warwick University, created the game as an assignment for a board game design module. The game rules are shared under the CC BY-NC-SA licence. The code is shared under the GPL v3.0 license.
