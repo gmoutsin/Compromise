@@ -13,7 +13,7 @@ There are two players and three 3x3 grids. At the beginning of each turn each pl
 
 Then each player is asked to choose a move, i.e they choose one grid, one row and one column. This choice is given by 3 numbers, for example 123 refers to the first grid, the second row and the third column. Both players make this choice without knowing what their opponent chose.
 
-Once both players choose, the choices are revealed. Then each grid, row and column that any player chose is "frozen". For example, if the first player chooses 123 and the second 213, then every position on the 1st and the 2nd grid is frozen. Moreover, the 1st and the 2nd rows in every grid are frozen as well as the 3rd column of every grid. The non-frozen position will be highlighted:
+Once both players choose, the choices are revealed. Then each grid, row and column that any player chose is "frozen". For example, if the first player chooses 123 and the second 213, then all positions on the 1st and the 2nd grids are frozen. Moreover, the 1st and the 2nd rows in every grid are frozen as well as the 3rd column of every grid. The non-frozen position will be highlighted:
 
 ![post-move](https://raw.githubusercontent.com/gmoutsin/Compromise/master/pictures/postmove.png)
 
