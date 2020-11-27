@@ -86,4 +86,4 @@ The method `fancyPlay` should be used when at least one of the players is an ins
 
 ## Licence
 
-This game is based on a board game which was created by Thomas James. Thomas, then a student at Warwick University, created the game as an assignment for a board game design module. The game rules are shared under the CC BY-NC-SA v3.0 licence. The code is shared under the GPL v3.0 license.
+This idea for this game came from a board game which was created by Thomas James, for a board game design module in Warwick University. The game rules are shared under the CC BY-NC-SA v3.0 licence. The code is shared under the GPL v3.0 license.
