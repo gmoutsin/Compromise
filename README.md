@@ -1,6 +1,8 @@
 # Compromise
 ###### A simple game to be used in machine learning teaching
 
+A web implementation of the game can be found [here](https://gmoutsin.github.io/compromise/game).
+
 ## Rules
 
 There are three versions of the game.
