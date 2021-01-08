@@ -7,7 +7,7 @@ import math
 class AbstractPlayer:
     def play(self, myState, oppState, myScore, oppScore, turn, length, nPips):
         return [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
-    
+
     def placePips(self, myState, oppState, myScore, oppScore, turn, length, nPips):
         return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
@@ -147,11 +147,11 @@ class DeterminedPlayer(AbstractPlayer):
             if not i in c3:
                 p3 = i
         return [p1,p2,p3]
-        
-        
+
+
 class OutOfGridException(Exception):
     pass
-        
+
 
 class HumanPlayer(AbstractPlayer):
     @staticmethod
@@ -176,7 +176,7 @@ class HumanPlayer(AbstractPlayer):
         if (a+1)*(b+1)*(c+1) == 0:
             raise OutOfGridException("getPosFromMouse: Invalid coordinates " + str([a,b,c]))
         return [a, b, c]
-        
+
     def printNumber(self, k, i, j, n, color):
         if n == 0:
             if self.order == 0:
@@ -198,20 +198,20 @@ class HumanPlayer(AbstractPlayer):
         self.colorN = None
         self.order = -1
         self.placements = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
-        
+
     def setParams(self, screenref, colourDefault, colourHighlight, colourNeutral, playOrder):
         self.screen = screenref
         self.color = colourDefault
         self.colorH = colourHighlight
         self.colorN = colourNeutral
         self.order = playOrder
-        
+
     def flushPlacements(self):
         for k in range(3):
             for i in range(3):
                 for j in range(3):
                     self.placements[k][i][j] = 0
-        
+
     def play(self, myState, oppState, myScore, oppScore, turn, length, nPips):
         self.screen.addstr(8, 50 , "Pick your move: ", self.color)
         curses.echo()
@@ -224,7 +224,7 @@ class HumanPlayer(AbstractPlayer):
         self.screen.addstr(8, 50 , "                        ", self.color)
         self.screen.addstr(9, 50 , "                        ", self.color)
         return [int(s[2])-1,int(s[3])-1,int(s[4])-1]
-    
+
     def placePips(self, myState, oppState, myScore, oppScore, turn, length, nPips):
         res = [ None for i in range(nPips)]
         placed = 0
@@ -275,18 +275,14 @@ class HumanPlayer(AbstractPlayer):
 
 class CompromiseGame:
     def __init__(self, playerA, playerB, nPips, length, gametype = "s", noTies = True):
-    # in reality the if the game type is not "s" or "g" then it is complex
-        if not (isinstance(playerA, AbstractPlayer)):
-            raise Exception("Green Player is not of valid type: " + str(type(playerA)))
-        if not (isinstance(playerB, AbstractPlayer)):
-            raise Exception("Red Player is not of valid type: " + str(type(playerB)))
+    # in practice the if the game type is not "s" or "g" then it is complex
         self.noties = noTies
         self.type = gametype
         self.greenMove = None
         self.redMove = None
         self.gameLength = length
         self.turn = 0
-        self.redPlayer = playerA 
+        self.redPlayer = playerA
         self.greenPlayer = playerB
         self.newPips = nPips
         self.greenScore = 0
@@ -308,11 +304,7 @@ class CompromiseGame:
         self.redDisposable = [[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]],[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
 
     def newPlayers(self, playerA, playerB):
-        if not (isinstance(playerA, AbstractPlayer)):
-            raise Exception("Green Player is not of valid type: " + str(type(playerA)))
-        if not (isinstance(playerB, AbstractPlayer)):
-            raise Exception("Red Player is not of valid type: " + str(type(playerB)))
-        self.redPlayer = playerA 
+        self.redPlayer = playerA
         self.greenPlayer = playerB
         self.resetGame()
 
@@ -361,7 +353,7 @@ class CompromiseGame:
                     raise Exception("Green Player's move is not between 0 and 2: " + str(self.greenMove))
                 if self.redMove[i] > 2 or self.redMove[i] < 0:
                     raise Exception("Red Player's move is not between 0 and 2: " + str(self.redMove))
-    
+
     def updateScore(self):
         for i in range(0, 3):
             for j in range(0, 3):
@@ -494,7 +486,7 @@ class CompromiseGame:
         self.fancyStatePrint(stdscr)
         stdscr.getkey()
 
-    def fancyPlay(self, stdscr):        
+    def fancyPlay(self, stdscr):
         curses.mousemask(1)
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
@@ -533,7 +525,7 @@ if __name__ == "__main__":
     pB = SmartGreedyPlayer()
     g = CompromiseGame(pA, pB, 30, 5)
     curses.wrapper(g.fancyPlay)
-    
+
     # score = [0,0,0]
     # for i in range(100):
         # g.resetGame()
