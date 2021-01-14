@@ -113,7 +113,7 @@ class DeterminedPlayer(AbstractPlayer):
         p2 = -1
         p3 = -1
         v = -math.inf
-        while (-1 in c1) or (-1 in c2) or (-1 in c2):
+        while (-1 in c1) or (-1 in c2) or (-1 in c3):
             for i in range(0, 3):
                 for j in range(0, 3):
                     for k in range(0, 3):
