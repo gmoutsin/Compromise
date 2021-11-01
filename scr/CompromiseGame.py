@@ -8,7 +8,7 @@ class AbstractPlayer:
     def play(self, my_state, opp_state, my_score, opp_score, turn, length, num_pips):
         return [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
 
-    def placePips(
+    def place_pips(
         self, my_state, opp_state, my_score, opp_score, turn, length, num_pips
     ):
         return [
@@ -161,7 +161,7 @@ class OutOfGridException(Exception):
 
 class HumanPlayer(AbstractPlayer):
     @staticmethod
-    def getPosFromMouse(mx, my):
+    def get_pos_from_mouse(mx, my):
         b = c = -1
         a = max(-1, my - 3)
         if mx >= 8 and mx <= 26:
@@ -179,15 +179,15 @@ class HumanPlayer(AbstractPlayer):
             c = 2
         if a > 2:
             raise OutOfGridException(
-                "getPosFromMouse: Invalid coordinates " + str([a, b, c])
+                "get_pos_from_mouse: Invalid coordinates " + str([a, b, c])
             )
         if (a + 1) * (b + 1) * (c + 1) == 0:
             raise OutOfGridException(
-                "getPosFromMouse: Invalid coordinates " + str([a, b, c])
+                "get_pos_from_mouse: Invalid coordinates " + str([a, b, c])
             )
         return [a, b, c]
 
-    def printNumber(self, k, i, j, n, color):
+    def print_number(self, k, i, j, n, color):
         if n == 0:
             if self.order == 0:
                 s = " ."
@@ -215,7 +215,7 @@ class HumanPlayer(AbstractPlayer):
             [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
         ]
 
-    def setParams(
+    def set_params(
         self, screenref, color_default, color_highlight, colour_neutral, play_order
     ):
         self.screen = screenref
@@ -224,7 +224,7 @@ class HumanPlayer(AbstractPlayer):
         self.color_neutral = colour_neutral
         self.order = play_order
 
-    def flushPlacements(self):
+    def flush_placements(self):
         for k in range(3):
             for i in range(3):
                 for j in range(3):
@@ -243,12 +243,12 @@ class HumanPlayer(AbstractPlayer):
         self.screen.addstr(9, 50, "                        ", self.color)
         return [int(s[2]) - 1, int(s[3]) - 1, int(s[4]) - 1]
 
-    def placePips(
+    def place_pips(
         self, my_state, opp_state, my_score, opp_score, turn, length, num_pips
     ):
         res = [None for i in range(num_pips)]
         placed = 0
-        self.flushPlacements()
+        self.flush_placements()
         self.screen.addstr(10, 50, "Place your pips", self.color)
         while True:
             key = self.screen.getch()
@@ -261,7 +261,7 @@ class HumanPlayer(AbstractPlayer):
             if key == 114 or key == 82:
                 # R key
                 placed = 0
-                self.flushPlacements()
+                self.flush_placements()
                 self.screen.addstr(
                     9, 50, "Need " + str(num_pips) + ", placed 0  ", self.color
                 )
@@ -270,15 +270,15 @@ class HumanPlayer(AbstractPlayer):
                 for k in range(3):
                     for i in range(3):
                         for j in range(3):
-                            self.printNumber(i, k, j, my_state[k][i][j], self.color)
+                            self.print_number(i, k, j, my_state[k][i][j], self.color)
             if key == curses.KEY_MOUSE:
                 _, mx, my, _, _ = curses.getmouse()
                 if placed < num_pips:
                     try:
-                        k, i, j = HumanPlayer.getPosFromMouse(mx, my)
+                        k, i, j = HumanPlayer.get_pos_from_mouse(mx, my)
                         placed += 1
                         self.placements[k][i][j] += 1
-                        self.printNumber(
+                        self.print_number(
                             k,
                             i,
                             j,
@@ -345,7 +345,7 @@ class CompromiseGame:
             [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
         ]
 
-    def resetGame(self):
+    def reset_game(self):
         self.turn = 0
         self.green_move = None
         self.red_move = None
@@ -372,18 +372,19 @@ class CompromiseGame:
             [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
         ]
 
+    def new_players(self, player_a, player_b):
         self.red_player = player_a
         self.green_player = player_b
-        self.resetGame()
+        self.reset_game()
 
-    def prepareDisposable(self):
+    def prepare_disposable(self):
         for i in range(3):
             for j in range(3):
                 for k in range(3):
                     self.green_disposable[i][j][k] = self.green_pips[i][j][k]
                     self.red_disposable[i][j][k] = self.red_pips[i][j][k]
 
-    def roundStart(self):
+    def round_start(self):
         self.turn += 1
         if self.type == "s":
             for i in range(0, self.new_pips):
@@ -419,7 +420,7 @@ class CompromiseGame:
             for p in red_placing:
                 self.red_pips[p[0]][p[1]][p[2]] += 1
 
-    def getMoves(self):
+    def get_moves(self):
         if self.type == "g":
             self.red_move = [
                 random.randint(0, 2),
@@ -432,7 +433,7 @@ class CompromiseGame:
                 random.randint(0, 2),
             ]
         else:
-            self.prepareDisposable()
+            self.prepare_disposable()
             self.red_move = self.red_player.play(
                 self.red_disposable,
                 self.green_disposable,
@@ -442,7 +443,7 @@ class CompromiseGame:
                 self.game_length,
                 self.new_pips,
             )
-            self.prepareDisposable()
+            self.prepare_disposable()
             self.green_move = self.green_player.play(
                 self.green_disposable,
                 self.red_disposable,
@@ -480,7 +481,7 @@ class CompromiseGame:
                         + str(self.red_move)
                     )
 
-    def updateScore(self):
+    def update_score(self):
         for i in range(0, 3):
             for j in range(0, 3):
                 for k in range(0, 3):
@@ -499,19 +500,19 @@ class CompromiseGame:
         self.green_move = None
         self.red_move = None
 
-    def playRound(self):
-        self.roundStart()
-        self.getMoves()
-        self.updateScore()
+    def play_round(self):
+        self.round_start()
+        self.get_moves()
+        self.update_score()
 
     def play(self):
         while self.turn < self.game_length or (
             self.no_ties and self.red_score == self.green_score
         ):
-            self.playRound()
+            self.play_round()
         return [self.red_score, self.green_score]
 
-    def fancyStatePrint(self, stdscr):
+    def fancy_state_print(self, stdscr):
         for k in range(3):
             for i in range(3):
                 for j in range(3):
@@ -545,7 +546,7 @@ class CompromiseGame:
                     # stdscr.addstr(". ")
         stdscr.refresh()
 
-    def fancyStateHighlight(self, stdscr):
+    def fancy_state_highlight(self, stdscr):
         for k in range(3):
             for i in range(3):
                 for j in range(3):
@@ -579,7 +580,7 @@ class CompromiseGame:
                             stdscr.addstr(". ", curses.color_pair(5))
         stdscr.refresh()
 
-    def fancyPrintMoves(self, stdscr):
+    def fancy_print_moves(self, stdscr):
         stdscr.addstr(
             8,
             20,
@@ -597,11 +598,11 @@ class CompromiseGame:
             curses.color_pair(2),
         )
 
-    def fancyDeleteMoves(self, stdscr):
+    def fancy_delete_moves(self, stdscr):
         stdscr.addstr(8, 20, "   ")
         stdscr.addstr(9, 20, "   ")
 
-    def fancyPrintScore(self, stdscr):
+    def fancy_print_score(self, stdscr):
         rs = ""
         # gs = ""
         # if self.green_score < 100:
@@ -623,7 +624,7 @@ class CompromiseGame:
         stdscr.addstr(" - ")
         stdscr.addstr(gs, curses.color_pair(2))
 
-    def fancyRoundStart(self, stdscr):
+    def fancy_round_start(self, stdscr):
         self.turn += 1
         if self.type == "s":
             for i in range(0, self.new_pips):
@@ -661,20 +662,20 @@ class CompromiseGame:
             for p in red_placing:
                 self.red_pips[p[0]][p[1]][p[2]] += 1
 
-    def fancyPlayRound(self, stdscr):
-        self.fancyRoundStart(stdscr)
-        self.fancyStatePrint(stdscr)
-        self.getMoves()
-        self.fancyPrintMoves(stdscr)
-        self.fancyStateHighlight(stdscr)
+    def fancy_play_round(self, stdscr):
+        self.fancy_round_start(stdscr)
+        self.fancy_state_print(stdscr)
+        self.get_moves()
+        self.fancy_print_moves(stdscr)
+        self.fancy_state_highlight(stdscr)
         stdscr.getkey()
-        self.updateScore()
-        self.fancyDeleteMoves(stdscr)
-        self.fancyPrintScore(stdscr)
-        self.fancyStatePrint(stdscr)
+        self.update_score()
+        self.fancy_delete_moves(stdscr)
+        self.fancy_print_score(stdscr)
+        self.fancy_state_print(stdscr)
         stdscr.getkey()
 
-    def fancyPlay(self, stdscr):
+    def fancy_play(self, stdscr):
         curses.mousemask(1)
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
@@ -682,7 +683,7 @@ class CompromiseGame:
         curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_WHITE)
         curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_WHITE)
         if isinstance(self.green_player, HumanPlayer):
-            self.green_player.setParams(
+            self.green_player.set_params(
                 stdscr,
                 curses.color_pair(2),
                 curses.color_pair(4),
@@ -690,7 +691,7 @@ class CompromiseGame:
                 1,
             )
         if isinstance(self.red_player, HumanPlayer):
-            self.red_player.setParams(
+            self.red_player.set_params(
                 stdscr,
                 curses.color_pair(1),
                 curses.color_pair(3),
@@ -702,7 +703,7 @@ class CompromiseGame:
         stdscr.addstr(9, 8, "Green move: ", curses.color_pair(2))
         stdscr.addstr(8, 30, "Round: ")
         stdscr.addstr(9, 30, "Score: ")
-        self.fancyStatePrint(stdscr)
+        self.fancy_state_print(stdscr)
         # while True:
         # key = stdscr.getch()
         # stdscr.addstr(0,0,str(key) + "   ")
@@ -711,7 +712,7 @@ class CompromiseGame:
         ):
             stdscr.addstr(8, 39, "      ")
             stdscr.addstr(8, 39, str(self.turn + 1) + " / " + str(self.game_length))
-            self.fancyPlayRound(stdscr)
+            self.fancy_play_round(stdscr)
         if self.red_score > self.green_score:
             stdscr.addstr(9, 50, "Player 1 won!       ", curses.color_pair(1))
         elif self.red_score < self.green_score:
@@ -725,11 +726,11 @@ if __name__ == "__main__":
     pA = HumanPlayer()
     pB = SmartGreedyPlayer()
     g = CompromiseGame(pA, pB, 30, 5)
-    curses.wrapper(g.fancyPlay)
+    curses.wrapper(g.fancy_play)
 
     # score = [0,0,0]
     # for i in range(100):
-    # g.resetGame()
+    # g.reset_game()
     # res = g.play()
     # if res[0] > res[1]:
     # score[0] += 1
