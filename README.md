@@ -41,7 +41,7 @@ The script defines a player abstract class named `AbstractPlayer`. This class de
 
 #### Custom Players
 
-Any player class has to extend the `AbstractPlayer` class and should overwrite the two methods `play` and `placePips`, though strictly speaking this is not a requirement.
+Any player class must have the following methods: `play` and `placePips`.
 
 The method `play` takes as input the state of the game and outputs the player's move. The signature of the function is `play(myState, oppState, myScore, oppScore, turn, length, nPips)` and it is called automatically by the game class. Its parameters are:
 * `myState`: A 3x3x3 array with the number of player's pips in each location of the board.
