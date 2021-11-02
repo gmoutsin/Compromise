@@ -11,15 +11,15 @@ import compromise_game as cg
 
 def main():
     """main function that sets up environmentand starts the game"""
-    pA = cg.HumanPlayer()
-    pB = cg.SmartGreedyPlayer()
-    g = cg.CompromiseGame(pA, pB, 30, 5)
-    curses.wrapper(g.fancy_play)
+    player_a = cg.HumanPlayer()
+    player_b = cg.SmartGreedyPlayer()
+    game = cg.CompromiseGame(player_a, player_b, 30, 5)
+    curses.wrapper(game.fancy_play)
 
     # score = [0,0,0]
     # for i in range(100):
-    # g.reset_game()
-    # res = g.play()
+    # game.reset_game()
+    # res = game.play()
     # if res[0] > res[1]:
     # score[0] += 1
     # elif res[1] > res[0]:
