@@ -1,6 +1,6 @@
 import curses
 import random
-from players import HumanPlayer
+from .players import HumanPlayer
 
 
 class CompromiseGame:

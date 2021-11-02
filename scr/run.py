@@ -1,19 +1,12 @@
 import curses
 
-from players import (
-    RandomPlayer,
-    GreedyPlayer,
-    SmartGreedyPlayer,
-    DeterminedPlayer,
-    HumanPlayer,
-)
-from game import CompromiseGame
+import compromise_game as cg
 
 
 def main():
-    pA = HumanPlayer()
-    pB = SmartGreedyPlayer()
-    g = CompromiseGame(pA, pB, 30, 5)
+    pA = cg.HumanPlayer()
+    pB = cg.SmartGreedyPlayer()
+    g = cg.CompromiseGame(pA, pB, 30, 5)
     curses.wrapper(g.fancy_play)
 
     # score = [0,0,0]
