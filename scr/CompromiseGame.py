@@ -13,7 +13,7 @@ class AbstractPlayer:
     ):
         return [
             [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
-            for i in range(num_pips)
+            for _ in range(num_pips)
         ]
 
 
@@ -302,7 +302,7 @@ class HumanPlayer(AbstractPlayer):
         for k in range(3):
             for i in range(3):
                 for j in range(3):
-                    for m in range(self.placements[k][i][j]):
+                    for _ in range(self.placements[k][i][j]):
                         res[indx] = [i, k, j]
                         indx += 1
         return res
@@ -387,7 +387,7 @@ class CompromiseGame:
     def round_start(self):
         self.turn += 1
         if self.type == "s":
-            for i in range(0, self.new_pips):
+            for _ in range(0, self.new_pips):
                 self.red_pips[random.randint(0, 2)][random.randint(0, 2)][
                     random.randint(0, 2)
                 ] += 1
@@ -627,7 +627,7 @@ class CompromiseGame:
     def fancy_round_start(self, stdscr):
         self.turn += 1
         if self.type == "s":
-            for i in range(0, self.new_pips):
+            for _ in range(0, self.new_pips):
                 self.red_pips[random.randint(0, 2)][random.randint(0, 2)][
                     random.randint(0, 2)
                 ] += 1
