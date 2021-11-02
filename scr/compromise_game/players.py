@@ -35,9 +35,9 @@ class GreedyPlayer(AbstractPlayer):
     def play(self, my_state, opp_state, my_score, opp_score, turn, length, num_pips):
         res = [-1, -1, -1]
         first = [0, 0, 0]
-        for k in range(3):
+        for grid in range(3):
             s = 0
-            for i in range(3):
+            for row in range(3):
                 for j in range(3):
                     s += my_state[k][i][j] - opp_state[k][i][j]
             first[k] = s

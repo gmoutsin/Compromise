@@ -1,3 +1,4 @@
+import copy
 import curses
 import random
 import itertools
@@ -19,37 +20,22 @@ class CompromiseGame:
         self, player_a, player_b, num_pips, length, game_type="s", no_ties=True
     ):
         # in practice the if the game type is not "s" or "g" then it is complex
+
+        # game settings
         self.no_ties = no_ties
         self.type = game_type
-        self.green_move = None
-        self.red_move = None
         self.game_length = length
-        self.turn = 0
         self.red_player = player_a
         self.green_player = player_b
         self.new_pips = num_pips
+
+        self.green_move = None
         self.green_score = 0
+        self.red_move = None
         self.red_score = 0
-        self.green_pips = [
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        ]
-        self.red_pips = [
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        ]
-        self.green_disposable = [
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        ]
-        self.red_disposable = [
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        ]
+
+        # initialise variables
+        self.reset_game()
 
     def reset_game(self):
         self.turn = 0
@@ -83,11 +69,6 @@ class CompromiseGame:
         self.green_player = player_b
         self.reset_game()
 
-    def prepare_disposable(self):
-        for grid, row, col in itertools.product(range(3), repeat=3):
-            self.green_disposable[grid][row][col] = self.green_pips[grid][row][col]
-            self.red_disposable[grid][row][col] = self.red_pips[grid][row][col]
-
     def round_start(self):
         self.turn += 1
         if self.type == "s":
@@ -95,20 +76,18 @@ class CompromiseGame:
                 increment_random_pip(self.red_pips)
                 increment_random_pip(self.green_pips)
         else:
-            self.prepare_disposable()
             green_placing = self.green_player.place_pips(
-                self.green_disposable,
-                self.red_disposable,
+                copy.deepcopy(self.green_pips),
+                copy.deepcopy(self.red_pips),
                 self.green_score,
                 self.red_score,
                 self.turn,
                 self.game_length,
                 self.new_pips,
             )
-            self.prepare_disposable()
             red_placing = self.red_player.place_pips(
-                self.red_disposable,
-                self.green_disposable,
+                copy.deepcopy(self.red_pips),
+                copy.deepcopy(self.green_pips),
                 self.red_score,
                 self.green_score,
                 self.turn,
@@ -135,20 +114,18 @@ class CompromiseGame:
                 random.randint(0, 2),
             ]
         else:
-            self.prepare_disposable()
             self.red_move = self.red_player.play(
-                self.red_disposable,
-                self.green_disposable,
+                copy.deepcopy(self.red_pips),
+                copy.deepcopy(self.green_pips),
                 self.red_score,
                 self.green_score,
                 self.turn,
                 self.game_length,
                 self.new_pips,
             )
-            self.prepare_disposable()
             self.green_move = self.green_player.play(
-                self.green_disposable,
-                self.red_disposable,
+                copy.deepcopy(self.green_pips),
+                copy.deepcopy(self.red_pips),
                 self.green_score,
                 self.red_score,
                 self.turn,
@@ -336,22 +313,20 @@ class CompromiseGame:
                     random.randint(0, 2)
                 ] += 1
         else:
-            self.prepare_disposable()
             self.fancy_state_print(stdscr)
             red_placing = self.red_player.place_pips(
-                self.red_disposable,
-                self.green_disposable,
+                copy.deepcopy(self.red_pips),
+                copy.deepcopy(self.green_pips),
                 self.red_score,
                 self.green_score,
                 self.turn,
                 self.game_length,
                 self.new_pips,
             )
-            self.prepare_disposable()
             self.fancy_state_print(stdscr)
             green_placing = self.green_player.place_pips(
-                self.green_disposable,
-                self.red_disposable,
+                copy.deepcopy(self.green_pips),
+                copy.deepcopy(self.red_pips),
                 self.green_score,
                 self.red_score,
                 self.turn,
