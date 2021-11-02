@@ -1,9 +1,20 @@
 import curses
 import random
+import itertools
 from .players import HumanPlayer
 
 
+def increment_random_pip(pips):
+    """randomly increment a pip in a given list"""
+    pips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+
+
 class CompromiseGame:
+    """the compromise game class
+
+    keeps track of game state and contains all game logic
+    """
+
     def __init__(
         self, player_a, player_b, num_pips, length, game_type="s", no_ties=True
     ):
@@ -73,22 +84,16 @@ class CompromiseGame:
         self.reset_game()
 
     def prepare_disposable(self):
-        for i in range(3):
-            for j in range(3):
-                for k in range(3):
-                    self.green_disposable[i][j][k] = self.green_pips[i][j][k]
-                    self.red_disposable[i][j][k] = self.red_pips[i][j][k]
+        for grid, row, col in itertools.product(range(3), repeat=3):
+            self.green_disposable[grid][row][col] = self.green_pips[grid][row][col]
+            self.red_disposable[grid][row][col] = self.red_pips[grid][row][col]
 
     def round_start(self):
         self.turn += 1
         if self.type == "s":
-            for _ in range(0, self.new_pips):
-                self.red_pips[random.randint(0, 2)][random.randint(0, 2)][
-                    random.randint(0, 2)
-                ] += 1
-                self.green_pips[random.randint(0, 2)][random.randint(0, 2)][
-                    random.randint(0, 2)
-                ] += 1
+            for _ in range(self.new_pips):
+                increment_random_pip(self.red_pips)
+                increment_random_pip(self.green_pips)
         else:
             self.prepare_disposable()
             green_placing = self.green_player.place_pips(
@@ -110,10 +115,12 @@ class CompromiseGame:
                 self.game_length,
                 self.new_pips,
             )
-            for p in green_placing:
-                self.green_pips[p[0]][p[1]][p[2]] += 1
-            for p in red_placing:
-                self.red_pips[p[0]][p[1]][p[2]] += 1
+
+            for grid, row, col in green_placing:
+                self.green_pips[grid][row][col] += 1
+
+            for grid, row, col in red_placing:
+                self.red_pips[grid][row][col] += 1
 
     def get_moves(self):
         if self.type == "g":
@@ -177,21 +184,19 @@ class CompromiseGame:
                     )
 
     def update_score(self):
-        for i in range(0, 3):
-            for j in range(0, 3):
-                for k in range(0, 3):
-                    if not (
-                        i == self.red_move[0]
-                        or i == self.green_move[0]
-                        or j == self.red_move[1]
-                        or j == self.green_move[1]
-                        or k == self.red_move[2]
-                        or k == self.green_move[2]
-                    ):
-                        self.red_score = self.red_score + self.red_pips[i][j][k]
-                        self.green_score = self.green_score + self.green_pips[i][j][k]
-                        self.red_pips[i][j][k] = 0
-                        self.green_pips[i][j][k] = 0
+        for grid, row, col in itertools.product(range(3), repeat=3):
+            if not (
+                grid == self.red_move[0]
+                or grid == self.green_move[0]
+                or row == self.red_move[1]
+                or row == self.green_move[1]
+                or col == self.red_move[2]
+                or col == self.green_move[2]
+            ):
+                self.red_score = self.red_score + self.red_pips[grid][row][col]
+                self.green_score = self.green_score + self.green_pips[grid][row][col]
+                self.red_pips[grid][row][col] = 0
+                self.green_pips[grid][row][col] = 0
         self.green_move = None
         self.red_move = None
 
@@ -208,71 +213,71 @@ class CompromiseGame:
         return [self.red_score, self.green_score]
 
     def fancy_state_print(self, stdscr):
-        for k in range(3):
-            for i in range(3):
-                for j in range(3):
-                    if self.red_pips[k][i][j] > 0:
-                        if self.red_pips[k][i][j] < 10:
-                            s = " " + str(self.red_pips[k][i][j])
-                        else:
-                            s = str(self.red_pips[k][i][j])
-                        stdscr.addstr(
-                            i + 3, 25 * k + 6 * j + 8, s, curses.color_pair(1)
-                        )
-                    else:
-                        stdscr.addstr(
-                            i + 3,
-                            25 * k + 6 * j + 8,
-                            " .",
-                        )
-                    if self.green_pips[k][i][j] > 0:
-                        if self.green_pips[k][i][j] < 10:
-                            s = str(self.green_pips[k][i][j]) + " "
-                        else:
-                            s = str(self.green_pips[k][i][j])
-                        stdscr.addstr(s, curses.color_pair(2))
-                    else:
-                        stdscr.addstr(
-                            ". ",
-                        )
-                    # if self.green_pips[k][i][j] > 0:
-                    # stdscr.addstr('{}'.format(self.green_pips[k][i][j]),curses.color_pair(2))
-                    # else:
-                    # stdscr.addstr(". ")
+        for grid, row, col in itertools.product(range(3), repeat=3):
+            if self.red_pips[grid][row][col] > 0:
+                if self.red_pips[grid][row][col] < 10:
+                    value = " " + str(self.red_pips[grid][row][col])
+                else:
+                    value = str(self.red_pips[grid][row][col])
+                stdscr.addstr(
+                    row + 3,
+                    (25 * grid) + (6 * col) + 8,
+                    value,
+                    curses.color_pair(1),
+                )
+            else:
+                stdscr.addstr(
+                    row + 3,
+                    (25 * grid) + (6 * col) + 8,
+                    " .",
+                )
+            if self.green_pips[grid][row][col] > 0:
+                if self.green_pips[grid][row][col] < 10:
+                    value = str(self.green_pips[grid][row][col]) + " "
+                else:
+                    value = str(self.green_pips[grid][row][col])
+                stdscr.addstr(value, curses.color_pair(2))
+            else:
+                stdscr.addstr(". ")
+            # if self.green_pips[k][i][j] > 0:
+            # stdscr.addstr('{}'.format(self.green_pips[k][i][j]),curses.color_pair(2))
+            # else:
+            # stdscr.addstr(". ")
         stdscr.refresh()
 
     def fancy_state_highlight(self, stdscr):
-        for k in range(3):
-            for i in range(3):
-                for j in range(3):
-                    if not (
-                        k == self.red_move[0]
-                        or k == self.green_move[0]
-                        or i == self.red_move[1]
-                        or i == self.green_move[1]
-                        or j == self.red_move[2]
-                        or j == self.green_move[2]
-                    ):
-                        if self.red_pips[k][i][j] > 0:
-                            if self.red_pips[k][i][j] < 10:
-                                s = " " + str(self.red_pips[k][i][j])
-                            else:
-                                s = str(self.red_pips[k][i][j])
-                            stdscr.addstr(
-                                i + 3, 25 * k + 6 * j + 8, s, curses.color_pair(3)
-                            )
-                        else:
-                            stdscr.addstr(
-                                i + 3, 25 * k + 6 * j + 8, " .", curses.color_pair(5)
-                            )
-                        if self.green_pips[k][i][j] > 0:
-                            if self.green_pips[k][i][j] < 10:
-                                s = str(self.green_pips[k][i][j]) + " "
-                            else:
-                                s = str(self.green_pips[k][i][j])
-                            stdscr.addstr(s, curses.color_pair(4))
-                        else:
-                            stdscr.addstr(". ", curses.color_pair(5))
+        for grid, row, col in itertools.product(range(3), repeat=3):
+            if not (
+                grid == self.red_move[0]
+                or grid == self.green_move[0]
+                or row == self.red_move[1]
+                or row == self.green_move[1]
+                or col == self.red_move[2]
+                or col == self.green_move[2]
+            ):
+                if self.red_pips[grid][row][col] > 0:
+                    if self.red_pips[grid][row][col] < 10:
+                        value = " " + str(self.red_pips[grid][row][col])
+                    else:
+                        value = str(self.red_pips[grid][row][col])
+                    stdscr.addstr(
+                        row + 3,
+                        (25 * grid) + (6 * col) + 8,
+                        value,
+                        curses.color_pair(3),
+                    )
+                else:
+                    stdscr.addstr(
+                        row + 3, (25 * grid) + (6 * col) + 8, " .", curses.color_pair(5)
+                    )
+                if self.green_pips[grid][row][col] > 0:
+                    if self.green_pips[grid][row][col] < 10:
+                        value = str(self.green_pips[grid][row][col]) + " "
+                    else:
+                        value = str(self.green_pips[grid][row][col])
+                    stdscr.addstr(value, curses.color_pair(4))
+                else:
+                    stdscr.addstr(". ", curses.color_pair(5))
         stdscr.refresh()
 
     def fancy_print_moves(self, stdscr):
@@ -293,12 +298,13 @@ class CompromiseGame:
             curses.color_pair(2),
         )
 
-    def fancy_delete_moves(self, stdscr):
+    @staticmethod
+    def fancy_delete_moves(stdscr):
         stdscr.addstr(8, 20, "   ")
         stdscr.addstr(9, 20, "   ")
 
     def fancy_print_score(self, stdscr):
-        rs = ""
+        red_score = ""
         # gs = ""
         # if self.green_score < 100:
         # if self.green_score < 10:
@@ -307,17 +313,17 @@ class CompromiseGame:
         # gs = " " + str(self.green_score)
         # else:
         # gs = str(self.green_score)
-        gs = str(self.green_score)
+        green_score = str(self.green_score)
         if self.red_score < 100:
             if self.green_score < 10:
-                rs = "  " + str(self.red_score)
+                red_score = "  " + str(self.red_score)
             else:
-                rs = " " + str(self.red_score)
+                red_score = " " + str(self.red_score)
         else:
-            rs = str(self.red_score)
-        stdscr.addstr(9, 37, rs, curses.color_pair(1))
+            red_score = str(self.red_score)
+        stdscr.addstr(9, 37, red_score, curses.color_pair(1))
         stdscr.addstr(" - ")
-        stdscr.addstr(gs, curses.color_pair(2))
+        stdscr.addstr(green_score, curses.color_pair(2))
 
     def fancy_round_start(self, stdscr):
         self.turn += 1
@@ -352,10 +358,10 @@ class CompromiseGame:
                 self.game_length,
                 self.new_pips,
             )
-            for p in green_placing:
-                self.green_pips[p[0]][p[1]][p[2]] += 1
-            for p in red_placing:
-                self.red_pips[p[0]][p[1]][p[2]] += 1
+            for grid, row, col in green_placing:
+                self.green_pips[grid][row][col] += 1
+            for grid, row, col in red_placing:
+                self.red_pips[grid][row][col] += 1
 
     def fancy_play_round(self, stdscr):
         self.fancy_round_start(stdscr)
