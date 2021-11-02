@@ -11,13 +11,42 @@ def increment_random_pip(pips):
     pips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
 
 
+def grid_ref_to_pixel_ref(grid, row, col):
+    return (25 * grid) + (6 * col) + 8, row + 3
+
+
 @dataclass
 class Player:
     color: str
-    move: list[list[int]]
-    pips: list[list[int]]
-    score: int
     engine: AbstractPlayer
+    left_align: bool = False
+    score: int = 0
+    move: list[list[int]] = None
+    pips: list[list[int]] = None
+
+    def get_random_move(self):
+        self.move = [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
+
+    def get_engine_move(self, turn, game_len, new_pips, other):
+        self.move = self.engine.play(
+            copy.deepcopy(self.pips),
+            copy.deepcopy(other.pips),
+            self.score,
+            other.score,
+            turn,
+            game_len,
+            new_pips,
+        )
+
+    def update_score(self, grid, row, col):
+        self.score += self.pips[grid][row][col]
+        self.pips[grid][row][col] = 0
+
+    def formatted_value(self, grid, row, col):
+        value = self.pips[grid][row][col]
+        if self.left_align:
+            return f"{value:<2}"
+        return f"{value:2}"
 
 
 class CompromiseGame:
@@ -36,8 +65,8 @@ class CompromiseGame:
         self.type = game_type
         self.game_length = length
 
-        self.red = Player("red", None, None, 0, player_a)
-        self.green = Player("green", None, None, 0, player_b)
+        self.red = Player("red", player_a)
+        self.green = Player("green", player_b, True)
         self.new_pips = num_pips
 
         # initialise variables
@@ -99,35 +128,16 @@ class CompromiseGame:
 
     def get_moves(self):
         if self.type == "g":
-            self.red.move = [
-                random.randint(0, 2),
-                random.randint(0, 2),
-                random.randint(0, 2),
-            ]
-            self.green.move = [
-                random.randint(0, 2),
-                random.randint(0, 2),
-                random.randint(0, 2),
-            ]
+            self.red.get_random_move()
+            self.green.get_random_move()
         else:
-            self.red.move = self.red.engine.play(
-                copy.deepcopy(self.red.pips),
-                copy.deepcopy(self.green.pips),
-                self.red.score,
-                self.green.score,
-                self.turn,
-                self.game_length,
-                self.new_pips,
+            self.red.get_engine_move(
+                self.turn, self.game_length, self.new_pips, self.green
             )
-            self.green.move = self.green.engine.play(
-                copy.deepcopy(self.green.pips),
-                copy.deepcopy(self.red.pips),
-                self.green.score,
-                self.red.score,
-                self.turn,
-                self.game_length,
-                self.new_pips,
+            self.green.get_engine_move(
+                self.turn, self.game_length, self.new_pips, self.red
             )
+
             if not isinstance(self.green.move, list):
                 raise Exception(
                     "Green Player's move is not a list: " + str(self.green.move)
@@ -166,10 +176,8 @@ class CompromiseGame:
                 or col == self.red.move[2]
                 or col == self.green.move[2]
             ):
-                self.red.score = self.red.score + self.red.pips[grid][row][col]
-                self.green.score = self.green.score + self.green.pips[grid][row][col]
-                self.red.pips[grid][row][col] = 0
-                self.green.pips[grid][row][col] = 0
+                self.red.update_score(grid, row, col)
+                self.green.update_score(grid, row, col)
         self.green.move = None
         self.red.move = None
 
@@ -187,29 +195,24 @@ class CompromiseGame:
 
     def fancy_state_print(self, stdscr):
         for grid, row, col in itertools.product(range(3), repeat=3):
+            pixel_x, pixel_y = grid_ref_to_pixel_ref(grid, row, col)
             if self.red.pips[grid][row][col] > 0:
-                if self.red.pips[grid][row][col] < 10:
-                    value = " " + str(self.red.pips[grid][row][col])
-                else:
-                    value = str(self.red.pips[grid][row][col])
                 stdscr.addstr(
-                    row + 3,
-                    (25 * grid) + (6 * col) + 8,
-                    value,
+                    pixel_y,
+                    pixel_x,
+                    self.red.formatted_value(grid, row, col),
                     curses.color_pair(1),
                 )
             else:
                 stdscr.addstr(
-                    row + 3,
-                    (25 * grid) + (6 * col) + 8,
+                    pixel_y,
+                    pixel_x,
                     " .",
                 )
             if self.green.pips[grid][row][col] > 0:
-                if self.green.pips[grid][row][col] < 10:
-                    value = str(self.green.pips[grid][row][col]) + " "
-                else:
-                    value = str(self.green.pips[grid][row][col])
-                stdscr.addstr(value, curses.color_pair(2))
+                stdscr.addstr(
+                    self.green.formatted_value(grid, row, col), curses.color_pair(2)
+                )
             else:
                 stdscr.addstr(". ")
             # if self.green.pips[k][i][j] > 0:
@@ -220,6 +223,7 @@ class CompromiseGame:
 
     def fancy_state_highlight(self, stdscr):
         for grid, row, col in itertools.product(range(3), repeat=3):
+            pixel_x, pixel_y = grid_ref_to_pixel_ref(grid, row, col)
             if not (
                 grid == self.red.move[0]
                 or grid == self.green.move[0]
@@ -229,26 +233,18 @@ class CompromiseGame:
                 or col == self.green.move[2]
             ):
                 if self.red.pips[grid][row][col] > 0:
-                    if self.red.pips[grid][row][col] < 10:
-                        value = " " + str(self.red.pips[grid][row][col])
-                    else:
-                        value = str(self.red.pips[grid][row][col])
                     stdscr.addstr(
-                        row + 3,
-                        (25 * grid) + (6 * col) + 8,
-                        value,
+                        pixel_y,
+                        pixel_x,
+                        self.red.formatted_value(grid, row, col),
                         curses.color_pair(3),
                     )
                 else:
-                    stdscr.addstr(
-                        row + 3, (25 * grid) + (6 * col) + 8, " .", curses.color_pair(5)
-                    )
+                    stdscr.addstr(pixel_y, pixel_x, " .", curses.color_pair(5))
                 if self.green.pips[grid][row][col] > 0:
-                    if self.green.pips[grid][row][col] < 10:
-                        value = str(self.green.pips[grid][row][col]) + " "
-                    else:
-                        value = str(self.green.pips[grid][row][col])
-                    stdscr.addstr(value, curses.color_pair(4))
+                    stdscr.addstr(
+                        self.green.formatted_value(grid, row, col), curses.color_pair(4)
+                    )
                 else:
                     stdscr.addstr(". ", curses.color_pair(5))
         stdscr.refresh()
