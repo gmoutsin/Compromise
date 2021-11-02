@@ -6,11 +6,6 @@ from dataclasses import dataclass
 from .players import HumanPlayer, AbstractPlayer
 
 
-def increment_random_pip(pips):
-    """randomly increment a pip in a given list"""
-    pips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
-
-
 def grid_ref_to_pixel_ref(grid, row, col):
     """turns row, col on a given grid to pixel x, y for wiriting with curses"""
     return (25 * grid) + (6 * col) + 8, row + 3
@@ -18,17 +13,24 @@ def grid_ref_to_pixel_ref(grid, row, col):
 
 @dataclass
 class Player:
-    color: str
+    """dataclass that represents everything the game knows about a player"""
+
     engine: AbstractPlayer
     left_align: bool = False
     score: int = 0
     move: list[list[int]] = None
     pips: list[list[int]] = None
 
+    def place_random_pip(self):
+        """increment a random pip"""
+        self.pips[random.randint(0, 2)][random.randint(0, 2)][random.randint(0, 2)] += 1
+
     def get_random_move(self):
+        """generate a random game move"""
         self.move = [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
 
     def get_engine_move(self, turn, game_len, new_pips, other):
+        """pass game state to player engine and return engine calculated move"""
         self.move = self.engine.play(
             copy.deepcopy(self.pips),
             copy.deepcopy(other.pips),
@@ -40,10 +42,12 @@ class Player:
         )
 
     def update_score(self, grid, row, col):
+        """move pips in a given grid reference to own score"""
         self.score += self.pips[grid][row][col]
         self.pips[grid][row][col] = 0
 
     def formatted_value(self, grid, row, col):
+        """string formatted output for own pips in a given grid reference"""
         value = self.pips[grid][row][col]
         if self.left_align:
             return f"{value:<2}"
@@ -66,14 +70,15 @@ class CompromiseGame:
         self.type = game_type
         self.game_length = length
 
-        self.red = Player("red", player_a)
-        self.green = Player("green", player_b, True)
+        self.red = Player(player_a)
+        self.green = Player(player_b, True)  # set left_right = True
         self.new_pips = num_pips
 
         # initialise variables
         self.reset_game()
 
     def reset_game(self):
+        """reset player and game variables"""
         self.turn = 0
         self.green.move = None
         self.red.move = None
@@ -91,16 +96,18 @@ class CompromiseGame:
         ]
 
     def new_players(self, player_a, player_b):
+        """reset game and replace player engines"""
         self.red.engine = player_a
         self.green.engine = player_b
         self.reset_game()
 
     def round_start(self):
+        """start a new game round, place player pips and increment turn"""
         self.turn += 1
         if self.type == "s":
             for _ in range(self.new_pips):
-                increment_random_pip(self.red.pips)
-                increment_random_pip(self.green.pips)
+                self.red.place_random_pip()
+                self.green.place_random_pip()
         else:
             green_placing = self.green.engine.place_pips(
                 copy.deepcopy(self.green.pips),
@@ -128,6 +135,7 @@ class CompromiseGame:
                 self.red.pips[grid][row][col] += 1
 
     def get_moves(self):
+        """get and validate player moves (random or engine)"""
         if self.type == "g":
             self.red.get_random_move()
             self.green.get_random_move()
@@ -168,6 +176,7 @@ class CompromiseGame:
                     )
 
     def update_score(self):
+        """play previously genergated/validated player moves"""
         for grid, row, col in itertools.product(range(3), repeat=3):
             if not (
                 grid == self.red.move[0]
@@ -183,11 +192,17 @@ class CompromiseGame:
         self.red.move = None
 
     def play_round(self):
+        """do a whole round:
+        - place player pips
+        - get player moves
+        - play those moves
+        """
         self.round_start()
         self.get_moves()
         self.update_score()
 
     def play(self):
+        """play the whole game. Keep track of how many turns have been played"""
         while self.turn < self.game_length or (
             self.no_ties and self.red.score == self.green.score
         ):
@@ -195,6 +210,7 @@ class CompromiseGame:
         return [self.red.score, self.green.score]
 
     def fancy_state_print(self, stdscr):
+        """formated game state output using curses"""
         for grid, row, col in itertools.product(range(3), repeat=3):
             pixel_x, pixel_y = grid_ref_to_pixel_ref(grid, row, col)
             if self.red.pips[grid][row][col] > 0:
@@ -223,6 +239,7 @@ class CompromiseGame:
         stdscr.refresh()
 
     def fancy_state_highlight(self, stdscr):
+        """highlight non-frozen grid squares"""
         for grid, row, col in itertools.product(range(3), repeat=3):
             pixel_x, pixel_y = grid_ref_to_pixel_ref(grid, row, col)
             if not (
@@ -251,6 +268,7 @@ class CompromiseGame:
         stdscr.refresh()
 
     def fancy_print_moves(self, stdscr):
+        """formatted output of player moves using curses"""
         stdscr.addstr(
             8,
             20,
@@ -270,10 +288,12 @@ class CompromiseGame:
 
     @staticmethod
     def fancy_delete_moves(stdscr):
+        """hide player moves from the screen, using curses"""
         stdscr.addstr(8, 20, "   ")
         stdscr.addstr(9, 20, "   ")
 
     def fancy_print_score(self, stdscr):
+        """formatted output of player scores, using curses"""
         red_score = ""
         # gs = ""
         # if self.green.score < 100:
@@ -296,42 +316,16 @@ class CompromiseGame:
         stdscr.addstr(green_score, curses.color_pair(2))
 
     def fancy_round_start(self, stdscr):
-        self.turn += 1
-        if self.type == "s":
-            for _ in range(0, self.new_pips):
-                self.red.pips[random.randint(0, 2)][random.randint(0, 2)][
-                    random.randint(0, 2)
-                ] += 1
-                self.green.pips[random.randint(0, 2)][random.randint(0, 2)][
-                    random.randint(0, 2)
-                ] += 1
-        else:
-            self.fancy_state_print(stdscr)
-            red_placing = self.red.engine.place_pips(
-                copy.deepcopy(self.red.pips),
-                copy.deepcopy(self.green.pips),
-                self.red.score,
-                self.green.score,
-                self.turn,
-                self.game_length,
-                self.new_pips,
-            )
-            self.fancy_state_print(stdscr)
-            green_placing = self.green.engine.place_pips(
-                copy.deepcopy(self.green.pips),
-                copy.deepcopy(self.red.pips),
-                self.green.score,
-                self.red.score,
-                self.turn,
-                self.game_length,
-                self.new_pips,
-            )
-            for grid, row, col in green_placing:
-                self.green.pips[grid][row][col] += 1
-            for grid, row, col in red_placing:
-                self.red.pips[grid][row][col] += 1
+        self.round_start()
 
     def fancy_play_round(self, stdscr):
+        """do a whole round:
+        - place player pips
+        - get player moves
+        - play those moves
+
+        while also doing formatted curses output and input
+        """
         self.fancy_round_start(stdscr)
         self.fancy_state_print(stdscr)
         self.get_moves()
@@ -345,6 +339,10 @@ class CompromiseGame:
         stdscr.getkey()
 
     def fancy_play(self, stdscr):
+        """play the whole game. Keep track of how many turns have been played
+
+        while also doing formatted curses output and input
+        """
         curses.mousemask(1)
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
