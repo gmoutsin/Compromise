@@ -1,9 +1,16 @@
+"""
+run.py
+
+initialises and runs an instance of compromise_game.CompromiseGame
+"""
+
 import curses
 
 import compromise_game as cg
 
 
 def main():
+    """main function that sets up environmentand starts the game"""
     pA = cg.HumanPlayer()
     pB = cg.SmartGreedyPlayer()
     g = cg.CompromiseGame(pA, pB, 30, 5)
