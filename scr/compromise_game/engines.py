@@ -1,5 +1,5 @@
 """
-classes related to player classes for compromise_game
+classes for engines to play compromise_game
 """
 
 import random
