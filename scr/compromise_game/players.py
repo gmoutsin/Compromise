@@ -1,3 +1,7 @@
+"""
+classes related to player classes for compromise_game
+"""
+
 import random
 import curses
 import math
@@ -9,6 +13,8 @@ class OutOfGridException(Exception):
 
 
 class AbstractPlayer:
+    """minimal abstract player class"""
+
     def play(self, my_state, opp_state, my_score, opp_score, turn, length, num_pips):
         return [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
 
