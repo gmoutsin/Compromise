@@ -3,7 +3,7 @@ import curses
 import random
 import itertools
 from dataclasses import dataclass
-from .players import HumanPlayer, AbstractPlayer
+from .engines import HumanPlayer, AbstractPlayer
 
 
 def grid_ref_to_pixel_ref(grid, row, col):

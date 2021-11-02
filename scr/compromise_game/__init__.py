@@ -6,4 +6,4 @@ for more information
 """
 
 from .game import *
-from .players import *
+from .engines import *

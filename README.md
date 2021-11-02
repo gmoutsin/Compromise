@@ -40,7 +40,7 @@ The project source is stored in the `scr/` directory. This directory contains th
  - `run.py`: a script to run the game
  - `compromise_game/`: a directory that is a python package storing the game code
    - `game.py`: a file containing code relevant to the game logic
-   - `players.py`: a file contaning game player classes
+   - `engines.py`: a file contaning game player engines
    - `__init__.py`: a file required by python to make a package
 
 ## Interface
