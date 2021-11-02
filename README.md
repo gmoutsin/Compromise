@@ -37,28 +37,28 @@ Just like the complex game with the only difference that the players do not choo
 
 ### Player Classes
 
-The script defines a player abstract class named `AbstractPlayer`. This class defines two methods: `play` and `placePips`. Both methods ignore the state of the game and give a random valid move each time they are called.
+The script defines a player abstract class named `AbstractPlayer`. This class defines two methods: `play` and `place_pips`. Both methods ignore the state of the game and give a random valid move each time they are called.
 
 #### Custom Players
 
-Any player class must have the following methods: `play` and `placePips`.
+Any player class must have the following methods: `play` and `place_pips`.
 
-The method `play` takes as input the state of the game and outputs the player's move. The signature of the function is `play(myState, oppState, myScore, oppScore, turn, length, nPips)` and it is called automatically by the game class. Its parameters are:
-* `myState`: A 3x3x3 array with the number of player's pips in each location of the board.
-* `oppState`: A 3x3x3 array with the number of opponents's pips in each location of the board.
-* `myScore`: The current score of the player.
-* `oppScore`: The current score of the opponent.
+The method `play` takes as input the state of the game and outputs the player's move. The signature of the function is `play(my_state, opp_state, my_score, opp_score, turn, length, num_pips)` and it is called automatically by the game class. Its parameters are:
+* `my_state`: A 3x3x3 array with the number of player's pips in each location of the board.
+* `opp_state`: A 3x3x3 array with the number of opponents's pips in each location of the board.
+* `my_score`: The current score of the player.
+* `opp_score`: The current score of the opponent.
 * `turn`: The current turn number.
 * `length`: The length of the game. This is specified at the construction of the game object.
-* `nPips`: The number of pips each player gets each turn. This is specified at the construction of the game object.
+* `num_pips`: The number of pips each player gets each turn. This is specified at the construction of the game object.
 
 All the arguments are integers.
 
 The method has to return a valid move, i.e. an array of length 3 and its elements can only be the numbers 0, 1 and 2. Notice that because in python array indices start at 0, a valid move is not three digit number with the digits 1,2,3.
 
-The method `placePips` takes as input the state of the game and outputs the list of coordinates of where the pips should be placed. The signature of the function is `placePips(myState, oppState, myScore, oppScore, turn, length, nPips)`, it is called automatically by the game class and its parameters are the same as the ones of the method `play`.
+The method `place_pips` takes as input the state of the game and outputs the list of coordinates of where the pips should be placed. The signature of the function is `place_pips(my_state, opp_state, my_score, opp_score, turn, length, num_pips)`, it is called automatically by the game class and its parameters are the same as the ones of the method `play`.
 
-The method has to return an array of length equal to `nPips` and each element of the array is an array of length 3 and its elements can only be the numbers 0, 1 and 2.
+The method has to return an array of length equal to `num_pips` and each element of the array is an array of length 3 and its elements can only be the numbers 0, 1 and 2.
 
 
 #### Predefined Players
@@ -78,9 +78,9 @@ All of the predefined players classes, place pips randomly. A human can easily w
 
 The game functionality is defined in the class `CompromiseGame`. The constructor takes two players, the number of pips given to the players each round, the length of the game, the type of the game (simple, complex or gamble, `"s"`, `"c"` or `"g"` respectively) and whether to accept ties. The last two values default to a simple game and non-acceptance of ties.
 
-The method `resetGame` resets the variable and should be used after a game is finished and before a new one starts.
+The method `reset_game` resets the variable and should be used after a game is finished and before a new one starts.
 
-The method `newPlayers` resets the game and defines new players.
+The method `new_players` resets the game and defines new players.
 
 The method `play` plays the game and returns a 2-array with the score. Notice that if at least one of the players is an instance of the class `HumanPlayer`, this will throw an error.
 
