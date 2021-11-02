@@ -33,6 +33,16 @@ The rules are practically the same as in the complex version of the game. The on
 
 Just like the complex game with the only difference that the players do not choose the grids, rows and columns, this is chosen for them by the computer at random.
 
+## Project structure
+
+The project source is stored in the `scr/` directory. This directory contains the following content:
+
+ - `run.py`: a script to run the game
+ - `compromise_game/`: a directory that is a python package storing the game code
+  - `game.py`: a file containing code relevant to the game logic
+  - `players.py`: a file contaning game player classes
+  - `__init__.py`: a file required by python to make a package
+
 ## Interface
 
 ### Player Classes
