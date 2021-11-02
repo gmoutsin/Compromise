@@ -12,6 +12,7 @@ def increment_random_pip(pips):
 
 
 def grid_ref_to_pixel_ref(grid, row, col):
+    """turns row, col on a given grid to pixel x, y for wiriting with curses"""
     return (25 * grid) + (6 * col) + 8, row + 3
 
 
